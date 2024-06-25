@@ -76,10 +76,15 @@ export class Bishop extends Piece {
 
 export class King extends Piece {
     move(x, y) {
-        
+        if (Math.abs(this.x_pos-x) <= 1 && Math.abs(this.y_pos - y) <= 1){
+            this.x_pos = x
+            this.y_pos = y
+        }
+        console.log("Error: Invalid Move")
+        return false
     }
 }
 
 export class Queen extends Piece {
-
+    
 }
