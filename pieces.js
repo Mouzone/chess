@@ -57,6 +57,7 @@ export class Knight extends Piece {
 
             this.x_pos = x
             this.y_pos = y
+            return true
         }
         console.log("Error: Invalid Move")
         return false
@@ -68,6 +69,7 @@ export class Bishop extends Piece {
         if (Math.abs(this.x_pos - x) === Math.abs(this.y_pos - y)){
             this.x_pos = x
             this.y_pos = y
+            return true
         }
         console.log("Error: Invalid Move")
         return false
@@ -79,6 +81,7 @@ export class King extends Piece {
         if (Math.abs(this.x_pos-x) <= 1 && Math.abs(this.y_pos - y) <= 1){
             this.x_pos = x
             this.y_pos = y
+            return true
         }
         console.log("Error: Invalid Move")
         return false
@@ -86,5 +89,20 @@ export class King extends Piece {
 }
 
 export class Queen extends Piece {
-    
+    move(x, y){
+        //bishop move pattern
+        if (Math.abs(this.x_pos - x) === Math.abs(this.y_pos - y)){
+            this.x_pos = x
+            this.y_pos = y
+            return true
+        } else if (this.y_pos - y === 0) { //rook move pattern
+            this.x_pos = x
+            return true
+        } else if (this.x_pos - x === 0) {
+            this.y_pos = y
+            return true
+        }
+        console.log("Error: Invalid Move")
+        return false
+    }
 }
