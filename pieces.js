@@ -5,10 +5,6 @@ class Piece {
         this.color = color
         this.alive = true
     }
-
-    valid_move(x, y){
-        return ((x >= 0 && x <= 7) && (y >= 0 && x <= 7))
-    }
 }
 
 export class Pawn extends Piece {

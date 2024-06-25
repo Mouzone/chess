@@ -1,6 +1,6 @@
 import {Pawn, Rook, Knight, Bishop, King, Queen} from "./pieces"
 
-class Black {
+export class Black {
     constructor() {
         this.pieces = {
             pawns: [
@@ -35,7 +35,7 @@ class Black {
     }
 }
 
-class White {
+export class White {
     constructor() {
         this.pieces = {
             pawns: [
