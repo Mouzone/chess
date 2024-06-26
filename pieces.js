@@ -7,6 +7,7 @@ class Piece {
     }
 }
 
+// if dead return False immediately for valid move for piece
 export class Pawn extends Piece {
     constructor(x_start_pos, y_start_pos, color) {
         super(x_start_pos, y_start_pos, color)
