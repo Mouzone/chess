@@ -16,21 +16,25 @@ function get_color_of_tile(x, y){
     return 0
 }
 
+function translate_position(position) {
+    const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h"]
+    for (let i = 0; i < alphabet.length; i++){
+        if (position.at(0) === alphabet[i]) {
+            return {"file": i, "rank": parseInt(position.at(1))}
+        }
+    }
+}
+
 function process_move(move){
-    if (move.length === 2){
-        // just a coordinate and only a pawn
-    } else if (move.length === 3){
-        // move a piece to an area
-    } else if (move.length)
+    const pieces = ["K", "Q", "R", "N", "B"]
+    if (!(move.at(0) in pieces)) {
+        
+    }
 }
 
-function start_game() {
-    const black_player = new Black()
-    const white_player = new White()
-    let curr_player = 1
-}
-
-start_game()
+const black_player = new Black()
+const white_player = new White()
+let curr_player_turn = 1
 
 const form = document.querySelector("#move-input")
 const input = document.querySelector("#move")

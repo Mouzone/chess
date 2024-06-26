@@ -13,22 +13,30 @@ export class Pawn extends Piece {
         this.bonus_move = true
     }
 
-    move(x, y){
+    check_valid_move(x, y){
         if (this.y_pos === y) {
             if (this.bonus_move) {
                 if (this.x_pos - x <= 2) {
-                    this.x_pos = x
                     return true
                 }
             } else {
                 if (this.x_pos - x === 1) {
-                    this.x_pos = x
                     return true
                 }
             }
         }
         console.log("Error: Invalid Move")
         return false
+    }
+
+    move(x, y){
+        if (this.check_valid_move(x, y)) {
+            this.x_pos = x
+        }
+    }
+
+    take(x, y) {
+        if ()
     }
 }
 
