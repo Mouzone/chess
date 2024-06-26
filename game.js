@@ -48,6 +48,10 @@ function process_move(move){
             const type_of_piece = types[`${move.at(0)}`]
             let piece_to_move = ""
             players[curr_player_turn].pieces[type_of_piece].forEach(piece => {
+                if (!piece.alive) {
+                    return
+                }
+                
                 if (specification) {
                     if (typeof specification === "number") {
                         if (piece.y_pos !== specification) {
@@ -55,6 +59,7 @@ function process_move(move){
                         }
                     } else if (typeof specification === "string") {
                         if (piece.x_pos !== specification) {
+                            // figure out logic to check between letter and x_pos which is int
                             return
                         }
                     }
