@@ -17,3 +17,19 @@ export function translate_position(position) {
         }
     }
 }
+
+export function fillBoard(players, board){
+    for (const player in players) {
+        for (const pieces in player.pieces) {
+            for (const type in pieces) {
+                for (const piece in type) {
+                    board[piece.x_pos][piece.y_pos] = piece
+                }
+            }
+        }
+    }
+}
+
+export function updateBoard(piece, location) {
+
+}

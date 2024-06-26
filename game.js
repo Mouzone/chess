@@ -5,10 +5,10 @@
 //      then mark that piece as dead (easier than to find specific one to pop
 
 import {Black, White} from "./player.js"
-import {valid_move, get_color_of_tile, translate_position} from "./helper"
+import {valid_move, get_color_of_tile, translate_position, updateBoard} from "./helper"
 
 function process_move(move){
-    const types = {"K":"king", "Q":"queen", "R":"rooks", "N":"knights", "B":"bishops"}
+    const types = {"K":"kings", "Q":"queens", "R":"rooks", "N":"knights", "B":"bishops"}
     if (!(move.at(0) in Object.keys(types))) {
         // must be a pawn
         // if typo will check move and run
@@ -36,6 +36,18 @@ function process_move(move){
         } else {
             // split it at the "x"
             // if something to the left of x we find specific pawn, else iterate through all and check valid
+            let capture_info = move.split("x")
+            if (capture_info.length === 1) {
+                const next_pos = translate_position(capture_info[0])
+                let counter = 0
+                const piece_to_move = players[curr_player_turn].pieces["pawns"].forEach(pawn => {
+                    if (pawn.check_valid_move(next_pos["file"], next_pos["rank"])){
+                        counter++
+                        return pawn
+                    }
+                })
+                // create matrix representation of the board and when game starts fill it up with the pieces
+            }
         }
     } else {
         if (!("x" in move)) {
@@ -51,7 +63,7 @@ function process_move(move){
                 if (!piece.alive) {
                     return
                 }
-                
+
                 if (specification) {
                     if (typeof specification === "number") {
                         if (piece.y_pos !== specification) {
@@ -84,7 +96,11 @@ function process_move(move){
 }
 
 const players = [new Black(), new White()]
+const BOARD_LENGTH = 8
+const board = Array(BOARD_LENGTH).fill().map(() =>
+                    Array(BOARD_LENGTH).fill(null));
 let curr_player_turn = 1
+updateBoard(players, board)
 // update this with the take logic
 // also will need to create checkmate logic
 let game_over = false

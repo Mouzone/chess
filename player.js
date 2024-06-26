@@ -25,10 +25,10 @@ export class Black {
                 new Bishop(2, 0, 0),
                 new Bishop(5, 0, 0)
             ],
-            queen: [
+            queens: [
                 new Queen(3, 0, 0),
             ],
-            king: [
+            kings: [
                 new King(4, 0, 0)
             ]
         }
