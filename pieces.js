@@ -29,14 +29,14 @@ export class Pawn extends Piece {
         return false
     }
 
+    check_valid_capture(x, y) {
+
+    }
+
     move(x, y){
         if (this.check_valid_move(x, y)) {
             this.x_pos = x
         }
-    }
-
-    take(x, y) {
-        if ()
     }
 }
 
