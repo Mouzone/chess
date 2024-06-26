@@ -1,4 +1,4 @@
-import {Pawn, Rook, Knight, Bishop, King, Queen} from "./pieces"
+import {Pawn, Rook, Knight, Bishop, King, Queen} from "./pieces.js"
 
 export class Black {
     constructor() {

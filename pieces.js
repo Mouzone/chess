@@ -8,8 +8,8 @@ class Piece {
 }
 
 export class Pawn extends Piece {
-    constructor() {
-        super()
+    constructor(x_start_pos, y_start_pos, color) {
+        super(x_start_pos, y_start_pos, color)
         this.bonus_move = true
     }
 
@@ -33,6 +33,7 @@ export class Pawn extends Piece {
 }
 
 export class Rook extends Piece {
+
     move(x, y){
         if (this.y_pos - y === 0) {
             this.x_pos = x
