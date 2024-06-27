@@ -18,17 +18,41 @@ export function translate_position(position) {
     }
 }
 
-export function fillBoard(players, board){
-    for (const player in players) {
-        for (const pieces in player.pieces) {
-            for (const type in pieces) {
-                for (const piece in type) {
-                    board[piece.x_pos][piece.y_pos] = piece
-                }
+export function createBoard(board_length){
+    const board_display = document.querySelector("div#board")
+    for (let i = 0; i < board_length; i++) {
+        for (let j = 0; j < board_length; j++) {
+            const square = document.createElement("div")
+            square.classList.add("square")
+            if ((i+j) % 2 === 0) {
+                square.style.backgroundColor = "#bfdbfe"
+            } else {
+                square.style.backgroundColor = "#a5b4fc"
             }
+            board_display.insertAdjacentElement("beforeend", square)
         }
     }
 }
+
+export function fillBoards(players, board){
+    const board_display = document.querySelector("div#board")
+    players.forEach(player => {
+        Object.entries(player.pieces).forEach(entry => {
+            entry[1].forEach(piece => {
+                board[piece.x_pos][piece.y_pos] = piece
+                const square = board_display.querySelector(`:nth-child(${8*piece.x_pos+piece.y_pos + 1})`)
+                square.textContent = entry[0].slice(0, -1)
+                if (piece.color){
+                    square.style.color = "white"
+                } else {
+                    square.style.color = "black"
+                }
+            })
+        })
+    })
+    return board
+}
+
 
 export function updateBoard(piece, location) {
 
