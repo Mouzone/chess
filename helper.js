@@ -9,15 +9,6 @@ export function get_color_of_tile(x, y){
     return 0
 }
 
-export function translate_position(position) {
-    const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h"]
-    for (let i = 0; i < alphabet.length; i++){
-        if (position.at(0) === alphabet[i]) {
-            return {"file": i, "rank": parseInt(position.at(1))}
-        }
-    }
-}
-
 export function createBoard(board_length){
     const board_display = document.querySelector("div#board")
     for (let i = 0; i < board_length; i++) {
@@ -41,7 +32,10 @@ export function fillBoards(players, board){
             entry[1].forEach(piece => {
                 board[piece.x_pos][piece.y_pos] = piece
                 const square = board_display.querySelector(`:nth-child(${8*piece.x_pos+piece.y_pos + 1})`)
-                square.textContent = entry[0].slice(0, -1)
+                const board_piece = document.createElement("p")
+                board_piece.draggable = true
+                square.insertAdjacentElement("beforeend", board_piece)
+                board_piece.textContent = entry[0].slice(0, -1)
                 if (piece.color){
                     square.style.color = "white"
                 } else {

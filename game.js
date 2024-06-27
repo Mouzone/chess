@@ -5,8 +5,11 @@
 //      then mark that piece as dead (easier than to find specific one to pop
 
 import {Black, White} from "./player.js"
-import {valid_move, get_color_of_tile, translate_position, updateBoard, fillBoards, createBoard} from "./helper.js"
+import {valid_move, get_color_of_tile, updateBoard, fillBoards, createBoard} from "./helper.js"
 
+// todo: on drag remove from square
+// todo: check square if valid move -> if not return to original square, else move it and change turn
+// todo: highlight squares that accept the move
 let curr_player_turn = 1
 let game_over = false
 
