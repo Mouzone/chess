@@ -41,6 +41,7 @@ export function fillBoards(players, board){
                 board_piece.addEventListener("dragstart", event => {
                     //access square the piece is inside right now and print its x_pos, y_pos
                     curr_piece.textContent = `${event.currentTarget.parentElement.dataset.x_pos}, ${event.currentTarget.parentElement.dataset.y_pos}`
+                    piece.showValidMoves(event.currentTarget.parentElement.dataset.x_pos, event.currentTarget.parentElement.dataset.y_pos)
                 })
                 if (piece.color){
                     board_piece.src = `pieces/white-${entry[0].slice(0, -1)}.svg`

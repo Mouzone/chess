@@ -1,3 +1,4 @@
+// todo: put capture logic for pawns, since pawns can move different if near another piece
 class Piece {
     constructor(x_start_pos, y_start_pos, color) {
         this.x_pos = x_start_pos
@@ -7,37 +8,28 @@ class Piece {
     }
 }
 
-// if dead return False immediately for valid move for piece
 export class Pawn extends Piece {
     constructor(x_start_pos, y_start_pos, color) {
         super(x_start_pos, y_start_pos, color)
         this.bonus_move = true
     }
 
-    check_valid_move(x, y){
-        if (this.y_pos === y) {
-            if (this.bonus_move) {
-                if (this.x_pos - x <= 2) {
-                    return true
-                }
-            } else {
-                if (this.x_pos - x === 1) {
-                    return true
-                }
-            }
+    // return array of squares can move to and highlight them
+    showValidMoves(curr_x, curr_y){
+        // both curr_x and curr_y are ints
+        const validMoves = []
+        if (this.bonus_move){
+            validMoves.push([this.x_pos, this.y_pos + 2])
         }
-        console.log("Error: Invalid Move")
-        return false
-    }
-
-    check_valid_capture(x, y) {
-
+        validMoves.push([this.x_pos, this.y_pos + 1])
     }
 
     move(x, y){
-        if (this.check_valid_move(x, y)) {
-            this.x_pos = x
+        if (y-this.y_pos === 2){
+            this.bonus_move = false
         }
+        this.x_pos = x
+        this.y_pos = y
     }
 }
 
