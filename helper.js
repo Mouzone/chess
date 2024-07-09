@@ -32,15 +32,29 @@ export function fillBoards(players, board){
             entry[1].forEach(piece => {
                 board[piece.x_pos][piece.y_pos] = piece
                 const square = board_display.querySelector(`:nth-child(${8*piece.x_pos+piece.y_pos + 1})`)
-                const board_piece = document.createElement("p")
+                square.dataset.x_pos = piece.x_pos
+                square.dataset.y_pos = piece.y_pos
+                const board_piece = document.createElement("img")
                 board_piece.draggable = true
-                square.insertAdjacentElement("beforeend", board_piece)
-                board_piece.textContent = entry[0].slice(0, -1)
+                const curr_piece = document.querySelector("div#curr_piece")
+                curr_piece.textContent = "Deez"
+                board_piece.addEventListener("dragstart", event => {
+                    //access square the piece is inside right now and print its x_pos, y_pos
+                    curr_piece.textContent = `${event.currentTarget.parentElement.dataset.x_pos}, ${event.currentTarget.parentElement.dataset.y_pos}`
+                })
                 if (piece.color){
-                    square.style.color = "white"
-                } else {
-                    square.style.color = "black"
+                    board_piece.src = `pieces/white-${entry[0].slice(0, -1)}.svg`
+                } else{
+                    board_piece.src = `pieces/black-${entry[0].slice(0, -1)}.svg`
                 }
+                board_piece.height = 50
+                board_piece.width = 50
+                square.insertAdjacentElement("beforeend", board_piece)
+                // todo on select, highlight squares it can move to (ignore capture)
+
+                // todo on select for each piece change the properties of the squares it can move to allow it to drop
+                // -> once dropped allow remove the permission to accept the piece
+                // will have to calculate which squares are moveable on selection based on the current position
             })
         })
     })

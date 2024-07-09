@@ -25,3 +25,9 @@ div.square {
     justify-content: center;
     align-content: center;
 }
+
+div#curr_piece {
+    width: 100px;
+    height: 100px;
+    font-size: 20px;
+}
