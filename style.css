@@ -31,3 +31,7 @@ div#curr_piece {
     height: 100px;
     font-size: 20px;
 }
+
+.possible-move {
+    background-color: orange;
+}
