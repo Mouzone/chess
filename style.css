@@ -26,10 +26,9 @@ div.square {
     align-content: center;
 }
 
-div#curr_piece {
-    width: 100px;
-    height: 100px;
-    font-size: 20px;
+img.piece {
+    height: 70px;
+    width: auto;
 }
 
 .white {

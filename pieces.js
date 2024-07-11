@@ -22,6 +22,7 @@ export class Pawn extends Piece {
             validMoves.push([this.x_pos, this.y_pos + 2])
         }
         validMoves.push([this.x_pos, this.y_pos + 1])
+        return validMoves
     }
 
     move(x, y){
