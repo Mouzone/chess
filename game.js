@@ -6,6 +6,8 @@ function generateBoard(){
             board.insertAdjacentElement("beforeend", square)
             square.setAttribute("id", `${row+col}`)
             square.classList.add("square")
+            square.dataset.row = `${row}`
+            square.dataset.col = `${col}`
             if ((row + col) % 2) {
                 square.classList.add("black")
             } else {
@@ -24,4 +26,5 @@ function initializeGame(){
     placePieces()
 }
 
+// White is 0, Black is 1
 initializeGame()

@@ -1,16 +1,16 @@
 // todo: put capture logic for pawns, since pawns can move different if near another piece
 class Piece {
-    constructor(x_start_pos, y_start_pos, color) {
-        this.x_pos = x_start_pos
-        this.y_pos = y_start_pos
+    constructor(row, col, color) {
+        this.row = row
+        this.col = col
         this.color = color
         this.alive = true
     }
 }
 
 export class Pawn extends Piece {
-    constructor(x_start_pos, y_start_pos, color) {
-        super(x_start_pos, y_start_pos, color)
+    constructor(row, col, color) {
+        super(row, col, color)
         this.bonus_move = true
     }
 
