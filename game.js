@@ -1,12 +1,27 @@
-let curr_player_turn = 1
-let game_over = false
+function generateBoard(){
+    const board = document.querySelector("div#board")
+    for(let row = 0; row < 8; row++){
+        for(let col = 0; col < 8; col++){
+            const square = document.createElement("div")
+            board.insertAdjacentElement("beforeend", square)
+            square.setAttribute("id", `${row+col}`)
+            square.classList.add("square")
+            if ((row + col) % 2) {
+                square.classList.add("black")
+            } else {
+                square.classList.add("white")
+            }
+        }
+    }
+}
 
-const players = [new Black(), new White()]
-const BOARD_LENGTH = 8
-let board_matrix = Array(BOARD_LENGTH).fill().map(() =>
-                    Array(BOARD_LENGTH).fill(null));
+function placePieces() {
+    const board = document.querySelector("div#board")
+}
 
-createBoard(BOARD_LENGTH)
-fillBoards(players, board_matrix)
+function initializeGame(){
+    generateBoard()
+    placePieces()
+}
 
-
+initializeGame()

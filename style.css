@@ -32,6 +32,13 @@ div#curr_piece {
     font-size: 20px;
 }
 
+.white {
+    background-color: azure;
+}
+
+.black {
+    background-color: cornflowerblue;
+}
 .possible-move {
     background-color: orange;
 }
