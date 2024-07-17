@@ -34,10 +34,6 @@ export class Pawn extends Piece {
 }
 
 export class Rook extends Piece {
-    constructor(row, col, color) {
-        super(row, col, color)
-    }
-
     getValidMoves(board){
         const valid_moves = []
         // go as left as possible
@@ -77,28 +73,54 @@ export class Rook extends Piece {
 }
 
 export class Knight extends Piece {
-    move(x, y){
-        if ((Math.abs(this.x_pos-x) === 2 && Math.abs(this.y_pos-y) === 1) ||
-            (Math.abs(this.x_pos-x) === 1 && Math.abs(this.y_pos-y) === 2)){
+    getValidMoves(board){
 
-            this.x_pos = x
-            this.y_pos = y
-            return true
-        }
-        console.log("Error: Invalid Move")
-        return false
     }
 }
 
 export class Bishop extends Piece {
-    move(x, y){
-        if (Math.abs(this.x_pos - x) === Math.abs(this.y_pos - y)){
-            this.x_pos = x
-            this.y_pos = y
-            return true
+    getValidMoves(board){
+        const valid_moves = []
+
+        // diagonal to top left corner
+        let j = this.col - 1
+        for (let i = this.row-1; i > -1; i--){
+            if (j < 0 || board[i][j]){
+                break
+            }
+            valid_moves.push([i, j])
+            j--
         }
-        console.log("Error: Invalid Move")
-        return false
+
+        // diagonal to top right corner
+        j = this.col + 1
+        for (let i = this.row-1; i > -1; i--){
+            if (j === 8 || board[i][j]){
+                break
+            }
+            valid_moves.push([i, j])
+            j++
+        }
+
+        // diagonal to bottom left corner
+        j = this.col - 1
+        for (let i = this.row+1; i < 8; i++){
+            if (j < 0 || board[i][j]){
+                break
+            }
+            valid_moves.push([i, j])
+            j--
+        }
+        // diagonal to bottom right corner
+        j = this.col + 1
+        for (let i = this.row+1; i < 8; i++){
+            if (j === 8 || board[i][j]){
+                break
+            }
+            valid_moves.push([i, j])
+            j++
+        }
+        return valid_moves
     }
 }
 
