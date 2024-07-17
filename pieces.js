@@ -1,10 +1,15 @@
-// todo: correct all move functions to stop before friendly piece, but if enemy piece include it
+// todo: refactor especially queen
 class Piece {
     constructor(row, col, color) {
         this.row = row
         this.col = col
         this.color = color
         this.alive = true
+    }
+
+    move(row, col) {
+        this.row = row
+        this.col = col
     }
 }
 
@@ -33,9 +38,20 @@ export class Pawn extends Piece {
         }
         return valid_moves
     }
+
+    move(row, col) {
+        this.row = row
+        this.col = col
+        this.bonus_move = false
+    }
 }
 
 export class Rook extends Piece {
+    constructor(row, col, color) {
+        super(row, col, color)
+        this.bonus_move = true
+    }
+
     getValidMoves(board){
         const valid_moves = []
         // go as left as possible
@@ -83,6 +99,12 @@ export class Rook extends Piece {
         }
         return valid_moves
     }
+
+    move(row, col) {
+        this.row = row
+        this.col = col
+        this.bonus_move = false
+    }
 }
 
 export class Knight extends Piece {
@@ -103,6 +125,7 @@ export class Knight extends Piece {
     }
 }
 
+//todo: combine top left and top right into one, combine bottom left and bottom right into one
 export class Bishop extends Piece {
     getValidMoves(board){
         const valid_moves = []
@@ -126,7 +149,7 @@ export class Bishop extends Piece {
         // diagonal to top right corner
         j = this.col + 1
         for (let i = this.row-1; i > -1; i--){
-            if (j === 8){
+            if (j > 7){
                 break
             }
             if (board[i][j]) {
@@ -157,7 +180,7 @@ export class Bishop extends Piece {
         // diagonal to bottom right corner
         j = this.col + 1
         for (let i = this.row+1; i < 8; i++){
-            if (j === 8){
+            if (j > 7){
                 break
             }
             if (board[i][j]) {
@@ -173,8 +196,12 @@ export class Bishop extends Piece {
     }
 }
 
-// write castling move
 export class King extends Piece {
+    constructor(row, col, color) {
+        super(row, col, color)
+        this.bonus_move = true
+    }
+
     getValidMoves(board){
         const valid_moves = []
         const d_s = [[1,0], [-1,0], [0,1], [0,-1], [1,1], [-1,-1], [1,-1], [-1,1]]
@@ -183,7 +210,19 @@ export class King extends Piece {
                 valid_moves.push([this.row+dx, this.col+dy])
             }
         })
+
+        // castling requirements:
+        // 1. King has not moved (check bonus_move, when moves remove)
+        // 2. Rook has not moved (check the two corners for rooks and check for bonus move)
+        // 3. The two squares that WILL BE occupied are empty (hard code these squares)
+        // 4. The two squares that WILL BE occupied are not under threat (for the two squares backtrack the attack paths and see if there is enemy piece)
         return valid_moves
+    }
+
+    move(row, col) {
+        this.row = row
+        this.col = col
+        this.bonus_move = false
     }
 }
 

@@ -36,6 +36,7 @@ function placePieces() {
                     const curr_row = parseInt(curr_square.dataset.row)
                     const curr_col = parseInt(curr_square.dataset.col)
 
+                    // make all these squares droppable, and once dropped remove droppability
                     const curr_active = document.querySelectorAll("div.possible-move")
                     curr_active?.forEach(square => {
                         square.classList.remove("possible-move")
