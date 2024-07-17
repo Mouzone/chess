@@ -1,4 +1,6 @@
 // todo: refactor especially queen
+import {checkThreat} from "./checkThreat";
+
 class Piece {
     constructor(row, col, color) {
         this.row = row
@@ -13,16 +15,14 @@ class Piece {
     }
 }
 
+// todo: en passant
+// todo: promotion
 export class Pawn extends Piece {
     constructor(row, col, color) {
         super(row, col, color)
         this.bonus_move = true
     }
 
-    // return array of squares can move to and highlight them
-    // todo: moment it moves set bonus_move to false
-    // todo: put capture logic for pawns, since pawns can move different if near another piece
-    // todo: pawns also have another special move
     getValidMoves(board){
         const valid_moves = []
         if (this.color){
@@ -63,7 +63,9 @@ export class Pawn extends Piece {
     }
 }
 
+// todo: castling
 export class Rook extends Piece {
+
     constructor(row, col, color) {
         super(row, col, color)
         this.bonus_move = true
@@ -142,7 +144,6 @@ export class Knight extends Piece {
     }
 }
 
-//todo: combine top left and top right into one, combine bottom left and bottom right into one
 export class Bishop extends Piece {
     getValidMoves(board){
         const valid_moves = []
@@ -213,7 +214,9 @@ export class Bishop extends Piece {
     }
 }
 
+// todo: castling
 export class King extends Piece {
+
     constructor(row, col, color) {
         super(row, col, color)
         this.bonus_move = true
@@ -233,10 +236,30 @@ export class King extends Piece {
         // 2. Rook has not moved (check the two corners for rooks and check for bonus move)
         // 3. The two squares that WILL BE occupied are empty (hard code these squares)
         // 4. The two squares that WILL BE occupied are not under threat (for the two squares backtrack the attack paths and see if there is enemy piece)
+        if (this.bonus_move){
+            if (board[this.row][7] && board[this.row][7] instanceof Rook && board[this.row][7].bonus_move && board[this.row][7].color === this.color) {
+                if (!board[this.row][6] && !board[this.row][5] && checkThreat([this.row, 6], board) && checkThreat([this.row, 5], board)) {
+                    valid_moves.append([this.row][6])
+                }
+            }
+            if (board[this.row][0] && board[this.row][0] instanceof Rook && board[this.row][0].bonus_move && board[this.row][0].color === this.color) {
+                if (!board[this.row][2] && !board[this.row][3] && checkThreat([this.row][2]) && checkThreat([this.row][3])) {
+                    valid_moves.append([this.row][2])
+                }
+            }
+        }
         return valid_moves
     }
 
     move(row, col) {
+        if (row === this.row && col-this.col === 2){
+            // MOVE the corresponding rook when castling
+            if (col === 6) {
+                
+            } else {
+
+            }
+        }
         this.row = row
         this.col = col
         this.bonus_move = false
