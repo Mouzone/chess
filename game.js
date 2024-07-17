@@ -28,11 +28,9 @@ function placePieces() {
                 const piece_icon = new Image()
                 piece_icon.draggable = true
                 piece_icon.classList.add("piece")
-                // todo: add move highlighting when selected
-                // -> generate validMoves based on current color scheming for each piece
-                // -> use the array to make those squares active
-                // -> to make droppable is to remove child from prev square and add it to curr square
                 // todo: drag and drop on legal move squares
+                // ---to make droppable is to remove child from prev square and add it to curr square
+                // dropping nonvalid square clears everything
                 piece_icon.addEventListener("dragstart", event => {
                     const curr_square = event.currentTarget.parentElement
                     const curr_row = parseInt(curr_square.dataset.row)
@@ -43,7 +41,7 @@ function placePieces() {
                         square.classList.remove("possible-move")
                     })
 
-                    const valid_moves = board[curr_row][curr_col].getValidMoves()
+                    const valid_moves = board[curr_row][curr_col].getValidMoves(board)
                     valid_moves.forEach(valid_move => {
                         const move_square = document.querySelector(`[data-row='${valid_move[0]}'][data-col='${valid_move[1]}']`)
                         move_square.classList.add("possible-move")

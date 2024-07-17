@@ -16,7 +16,7 @@ export class Pawn extends Piece {
 
     // return array of squares can move to and highlight them
     // todo: moment it moves set bonus_move to false
-    getValidMoves(curr_x, curr_y){
+    getValidMoves(board){
         const valid_moves = []
         if (this.color){
             if (this.bonus_move){
@@ -31,28 +31,48 @@ export class Pawn extends Piece {
         }
         return valid_moves
     }
-
-    move(x, y){
-        if (y-this.y_pos === 2){
-            this.bonus_move = false
-        }
-        this.x_pos = x
-        this.y_pos = y
-    }
 }
 
 export class Rook extends Piece {
+    constructor(row, col, color) {
+        super(row, col, color)
+    }
 
-    move(x, y){
-        if (this.y_pos - y === 0) {
-            this.x_pos = x
-            return true
-        } else if (this.x_pos - x === 0) {
-            this.y_pos = y
-            return true
+    getValidMoves(board){
+        const valid_moves = []
+        // go as left as possible
+        for (let i = this.col - 1; i > -1; i--){
+            if (board[this.row][i]){
+                break
+            }
+            valid_moves.push([this.row, i])
         }
-        console.log("Error: Invalid Move")
-        return false
+
+        // go as right as possible
+        for (let i = this.col + 1; i < 8; i++){
+            if (board[this.row][i]){
+                break
+            }
+            valid_moves.push([this.row, i])
+        }
+
+        // go as up as possible
+        for (let i = this.row - 1; i > -1; i--){
+            if (board[i][this.col]){
+                break
+            }
+            valid_moves.push([i, this.col])
+        }
+
+        // go as down as possible
+        for (let i = this.row + 1; i < 8; i++){
+            if (board[i][this.col]){
+                break
+            }
+            valid_moves.push([i, this.col])
+        }
+
+        return valid_moves
     }
 }
 
@@ -82,6 +102,7 @@ export class Bishop extends Piece {
     }
 }
 
+// build castling move
 export class King extends Piece {
     move(x, y) {
         if (Math.abs(this.x_pos-x) <= 1 && Math.abs(this.y_pos - y) <= 1){
