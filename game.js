@@ -1,6 +1,6 @@
 import Player from "./player.js"
 
-function generateBoard(){
+function generateBoardDisplay(){
     const board = document.querySelector("div#board")
     for(let row = 0; row < 8; row++){
         for(let col = 0; col < 8; col++){
@@ -20,7 +20,7 @@ function generateBoard(){
     }
 }
 
-function placePieces(players) {
+function placePieces() {
     players.forEach(player => {
         Object.entries(player.pieces).forEach(([type_of_piece, pieces]) => {
             pieces.forEach(piece => {
@@ -28,12 +28,35 @@ function placePieces(players) {
                 const piece_icon = new Image()
                 piece_icon.draggable = true
                 piece_icon.classList.add("piece")
+                // todo: add move highlighting when selected
+                // -> generate validMoves based on current color scheming for each piece
+                // -> use the array to make those squares active
+                // -> to make droppable is to remove child from prev square and add it to curr square
+                // todo: drag and drop on legal move squares
+                piece_icon.addEventListener("dragstart", event => {
+                    const curr_square = event.currentTarget.parentElement
+                    const curr_row = parseInt(curr_square.dataset.row)
+                    const curr_col = parseInt(curr_square.dataset.col)
+
+                    const curr_active = document.querySelectorAll("div.possible-move")
+                    curr_active?.forEach(square => {
+                        square.classList.remove("possible-move")
+                    })
+
+                    const valid_moves = board[curr_row][curr_col].getValidMoves()
+                    valid_moves.forEach(valid_move => {
+                        const move_square = document.querySelector(`[data-row='${valid_move[0]}'][data-col='${valid_move[1]}']`)
+                        move_square.classList.add("possible-move")
+                    })
+                })
+
                 if (piece.color === BLACK) {
                     // slice to remove plural "s" from pieces keys
                     piece_icon.src = `./pieces/black-${type_of_piece.slice(0,-1)}.svg`
                 } else {
                     piece_icon.src = `./pieces/white-${type_of_piece.slice(0,-1)}.svg`
                 }
+                board[piece.row][piece.col] = piece
                 target_square.appendChild(piece_icon)
             })
         })
@@ -41,11 +64,12 @@ function placePieces(players) {
 }
 
 function initializeGame(){
-    const players = [new Player(WHITE), new Player(BLACK)]
-    generateBoard()
-    placePieces(players)
+    generateBoardDisplay()
+    placePieces()
 }
 
+const board = Array.from({ length: 8 }, () => Array(8).fill(null))
 const WHITE = 0
 const BLACK = 1
+const players = [new Player(WHITE), new Player(BLACK)]
 initializeGame()

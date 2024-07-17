@@ -15,14 +15,21 @@ export class Pawn extends Piece {
     }
 
     // return array of squares can move to and highlight them
-    showValidMoves(curr_x, curr_y){
-        // both curr_x and curr_y are ints
-        const validMoves = []
-        if (this.bonus_move){
-            validMoves.push([this.x_pos, this.y_pos + 2])
+    // todo: moment it moves set bonus_move to false
+    getValidMoves(curr_x, curr_y){
+        const valid_moves = []
+        if (this.color){
+            if (this.bonus_move){
+                valid_moves.push([this.row + 2, this.col])
+            }
+            valid_moves.push([this.row + 1, this.col])
+        } else {
+            if (this.bonus_move){
+                valid_moves.push([this.row - 2, this.col])
+            }
+            valid_moves.push([this.row - 1, this.col])
         }
-        validMoves.push([this.x_pos, this.y_pos + 1])
-        return validMoves
+        return valid_moves
     }
 
     move(x, y){
