@@ -30,12 +30,29 @@ export class Pawn extends Piece {
                 valid_moves.push([this.row + 2, this.col])
             }
             valid_moves.push([this.row + 1, this.col])
+
+            //capture enemy piece
+            if (this.col-1 > -1 && board[this.row+1][this.col-1] && board[this.row+1][this.col-1].color !== this.color) {
+                valid_moves.push([this.row+1, this.col-1])
+            }
+            if (this.col+1 < 8 && board[this.row+1][this.col+1] && board[this.row+1][this.col+1].color !== this.color) {
+                valid_moves.push([this.row+1, this.col+1])
+            }
         } else {
             if (this.bonus_move){
                 valid_moves.push([this.row - 2, this.col])
             }
             valid_moves.push([this.row - 1, this.col])
+
+            //capture enemy piece
+            if (this.col-1 > -1 && board[this.row-1][this.col-1] && board[this.row-1][this.col-1].color !== this.color) {
+                valid_moves.push([this.row+1, this.col-1])
+            }
+            if (this.col+1 < 8 && board[this.row-1][this.col+1] && board[this.row-1][this.col+1].color !== this.color) {
+                valid_moves.push([this.row+1, this.col+1])
+            }
         }
+
         return valid_moves
     }
 
