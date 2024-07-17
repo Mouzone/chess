@@ -9,9 +9,12 @@ class Piece {
         this.alive = true
     }
 
-    move(row, col) {
+    move(row, col, board) {
+        const piece = board[this.row][this.col]
+        board[this.row][this.col] = null
         this.row = row
         this.col = col
+        board[this.row][this.col] = piece
     }
 }
 
@@ -56,14 +59,12 @@ export class Pawn extends Piece {
         return valid_moves
     }
 
-    move(row, col) {
-        this.row = row
-        this.col = col
+    move(row, col, board) {
+        super.move(row, col, board)
         this.bonus_move = false
     }
 }
 
-// todo: castling
 export class Rook extends Piece {
 
     constructor(row, col, color) {
@@ -119,9 +120,8 @@ export class Rook extends Piece {
         return valid_moves
     }
 
-    move(row, col) {
-        this.row = row
-        this.col = col
+    move(row, col, board) {
+        super.move(row, col, board)
         this.bonus_move = false
     }
 }
@@ -214,7 +214,6 @@ export class Bishop extends Piece {
     }
 }
 
-// todo: castling
 export class King extends Piece {
 
     constructor(row, col, color) {
@@ -251,17 +250,20 @@ export class King extends Piece {
         return valid_moves
     }
 
-    move(row, col) {
+    move(row, col, board) {
         if (row === this.row && col-this.col === 2){
             // MOVE the corresponding rook when castling
             if (col === 6) {
-                
+                // get the rook at board[this.row][7]
+                // move the rook to board[this.row][5]
+                let rook = board[this.row][7]
+                rook.move(this.row, 5, board)
             } else {
-
+                let rook = board[this.row][0]
+                rook.move(this.row, 3, board)
             }
         }
-        this.row = row
-        this.col = col
+        super.move(row, col, board)
         this.bonus_move = false
     }
 }
