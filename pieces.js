@@ -41,6 +41,9 @@ export class Rook extends Piece {
         // go as left as possible
         for (let i = this.col - 1; i > -1; i--){
             if (board[this.row][i]){
+                if (board[this.row][i]?.color !== this.color){
+                    valid_moves.push([this.row, i])
+                }
                 break
             }
             valid_moves.push([this.row, i])
@@ -49,6 +52,9 @@ export class Rook extends Piece {
         // go as right as possible
         for (let i = this.col + 1; i < 8; i++){
             if (board[this.row][i]){
+                if (board[this.row][i]?.color !== this.color){
+                    valid_moves.push([this.row, i])
+                }
                 break
             }
             valid_moves.push([this.row, i])
@@ -57,6 +63,9 @@ export class Rook extends Piece {
         // go as up as possible
         for (let i = this.row - 1; i > -1; i--){
             if (board[i][this.col]){
+                if (board[i][this.col]?.color !== this.color){
+                    valid_moves.push([i, this.col])
+                }
                 break
             }
             valid_moves.push([i, this.col])
@@ -65,6 +74,9 @@ export class Rook extends Piece {
         // go as down as possible
         for (let i = this.row + 1; i < 8; i++){
             if (board[i][this.col]){
+                if (board[i][this.col]?.color !== this.color){
+                    valid_moves.push([i, this.col])
+                }
                 break
             }
             valid_moves.push([i, this.col])
@@ -80,7 +92,7 @@ export class Knight extends Piece {
         d_s.forEach(([dx, dy]) => {
             if (this.row + dx > -1 && this.row + dx < 8) {
                 if (this.col + dy > -1 && this.col + dy < 8) {
-                    if (!board[this.row + dx][this.col + dy]){
+                    if (!board[this.row + dx][this.col + dy] || board[this.row + dx][this.col + dy].color !== this.color){
                         valid_moves.push([this.row + dx, this.col + dy])
                     }
                 }
@@ -98,7 +110,13 @@ export class Bishop extends Piece {
         // diagonal to top left corner
         let j = this.col - 1
         for (let i = this.row-1; i > -1; i--){
-            if (j < 0 || board[i][j]){
+            if (j < 0){
+                break
+            }
+            if (board[i][j]) {
+                if (board[i][j].color !== this.color){
+                    valid_moves.push([i, j])
+                }
                 break
             }
             valid_moves.push([i, j])
@@ -108,7 +126,13 @@ export class Bishop extends Piece {
         // diagonal to top right corner
         j = this.col + 1
         for (let i = this.row-1; i > -1; i--){
-            if (j === 8 || board[i][j]){
+            if (j === 8){
+                break
+            }
+            if (board[i][j]) {
+                if (board[i][j].color !== this.color){
+                    valid_moves.push([i, j])
+                }
                 break
             }
             valid_moves.push([i, j])
@@ -118,7 +142,13 @@ export class Bishop extends Piece {
         // diagonal to bottom left corner
         j = this.col - 1
         for (let i = this.row+1; i < 8; i++){
-            if (j < 0 || board[i][j]){
+            if (j < 0){
+                break
+            }
+            if (board[i][j]) {
+                if (board[i][j].color !== this.color){
+                    valid_moves.push([i, j])
+                }
                 break
             }
             valid_moves.push([i, j])
@@ -127,7 +157,13 @@ export class Bishop extends Piece {
         // diagonal to bottom right corner
         j = this.col + 1
         for (let i = this.row+1; i < 8; i++){
-            if (j === 8 || board[i][j]){
+            if (j === 8){
+                break
+            }
+            if (board[i][j]) {
+                if (board[i][j].color !== this.color){
+                    valid_moves.push([i, j])
+                }
                 break
             }
             valid_moves.push([i, j])
@@ -143,7 +179,7 @@ export class King extends Piece {
         const valid_moves = []
         const d_s = [[1,0], [-1,0], [0,1], [0,-1], [1,1], [-1,-1], [1,-1], [-1,1]]
         d_s.forEach(([dx, dy]) => {
-            if (!board[this.row + dx][this.col + dy]) {
+            if (!board[this.row + dx][this.col + dy] || board[this.row + dx][this.col + dy].color !== this.color) {
                 valid_moves.push([this.row+dx, this.col+dy])
             }
         })
