@@ -8,6 +8,7 @@ class Piece {
     }
 }
 
+// todo: correct all move functions to stop before friendly piece, but if enemy piece include it
 export class Pawn extends Piece {
     constructor(row, col, color) {
         super(row, col, color)
@@ -67,14 +68,26 @@ export class Rook extends Piece {
             }
             valid_moves.push([i, this.col])
         }
-
         return valid_moves
     }
 }
 
 export class Knight extends Piece {
     getValidMoves(board){
+        const valid_moves = []
+        const d_s = [[-2, -1], [-2, 1], [2, -1], [2, 1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
+        d_s.forEach(([dx, dy]) => {
+            if (this.row + dx > -1 && this.row + dx < 8) {
+                if (this.col + dy > -1 && this.col + dy < 8) {
+                    if (!board[this.row + dx][this.col + dy]){
+                        valid_moves.push([this.row + dx, this.col + dy])
+                    }
+                }
+            }
+        })
 
+        console.log(valid_moves)
+        return valid_moves
     }
 }
 
