@@ -1,6 +1,4 @@
 // todo: refactor especially queen
-import {checkThreat} from "./checkThreat.js";
-
 class Piece {
     constructor(row, col, color) {
         this.row = row
@@ -225,8 +223,10 @@ export class King extends Piece {
         const valid_moves = []
         const d_s = [[1,0], [-1,0], [0,1], [0,-1], [1,1], [-1,-1], [1,-1], [-1,1]]
         d_s.forEach(([dx, dy]) => {
-            if (!board[this.row + dx][this.col + dy] || board[this.row + dx][this.col + dy].color !== this.color) {
-                valid_moves.push([this.row+dx, this.col+dy])
+            if (this.row+dx < 8 && this.row+dx > -1 && this.col+dy < 8 && this.col+dy > -1){
+                if (!board[this.row + dx][this.col + dy] || (board[this.row + dx][this.col + dy] && board[this.row + dx][this.col + dy].color !== this.color)) {
+                    valid_moves.push([this.row+dx, this.col+dy])
+                }
             }
         })
 
@@ -237,16 +237,18 @@ export class King extends Piece {
         // 4. The two squares that WILL BE occupied are not under threat (for the two squares backtrack the attack paths and see if there is enemy piece)
         if (this.bonus_move){
             if (board[this.row][7] && board[this.row][7] instanceof Rook && board[this.row][7].bonus_move && board[this.row][7].color === this.color) {
-                if (!board[this.row][6] && !board[this.row][5] && checkThreat(this.row, 6, board) && checkThreat(this.row, 5, board)) {
-                    valid_moves.append([this.row][6])
+                if (!board[this.row][6] && !board[this.row][5] && !checkThreat(this.row, 6, this.color, board) && !checkThreat(this.row, 5, this.color, board)) {
+                    valid_moves.push([this.row, 6])
                 }
             }
             if (board[this.row][0] && board[this.row][0] instanceof Rook && board[this.row][0].bonus_move && board[this.row][0].color === this.color) {
-                if (!board[this.row][2] && !board[this.row][3] && checkThreat(this.row, 2, board) && checkThreat(this.row, 3, board)) {
-                    valid_moves.append([this.row][2])
+                if (!board[this.row][1] && !board[this.row][2] && !checkThreat(this.row, 1, this.color, board) && !checkThreat(this.row, 2, this.color, board)) {
+                    valid_moves.push([this.row, 2])
                 }
             }
         }
+
+        console.log(!checkThreat(this.row, 5, this.color, board))
         return valid_moves
     }
 
@@ -343,4 +345,175 @@ export class Queen extends Piece {
 
         return valid_moves
     }
+}
+
+function checkThreat(row, col, color, board) {
+    console.log(row, col)
+    // check in each direction for the first piece it encounters as enemy cannot hop over own pieces
+    // -- except for knight
+    // return True right away if any piece is found
+    // return False at end if no piece is found
+
+    // check diagonal for bishop, pawn, queen, king
+    // diagonal to top left corner
+    let j = col - 1
+    for (let i = row-1; i > -1; i--){
+        if (j < 0){
+            break
+        }
+        if (board[i][j]) {
+            if (board[i][j].color !== color){
+                if (board[i][j] instanceof Bishop || board[i][j] instanceof Queen) {
+                    return true
+                }
+                if (board[i][j] instanceof Pawn || board[i][j] instanceof King) {
+                    if (Math.abs(col - j) === 1) {
+                        return true
+                    }
+                }
+            }
+            break
+        }
+        j--
+    }
+
+    // diagonal to top right corner
+    j = col + 1
+    for (let i = row-1; i > -1; i--){
+        if (j > 7){
+            break
+        }
+        if (board[i][j]) {
+            if (board[i][j].color !== color){
+                if (board[i][j] instanceof Bishop || board[i][j] instanceof Queen) {
+                    return true
+                }
+                if (board[i][j] instanceof Pawn || board[i][j] instanceof King) {
+                    if (Math.abs(col - j) === 1) {
+                        return true
+                    }
+                }
+            }
+            break
+        }
+        j--
+    }
+
+    // diagonal to bottom left corner
+    j = col - 1
+    for (let i = row+1; i < 8; i++){
+        if (j < 0){
+            break
+        }
+        if (board[i][j]) {
+            if (board[i][j].color !== color){
+                if (board[i][j] instanceof Bishop || board[i][j] instanceof Queen) {
+                    return true
+                }
+                if (board[i][j] instanceof Pawn || board[i][j] instanceof King) {
+                    if (Math.abs(col - j) === 1) {
+                        return true
+                    }
+                }
+            }
+            break
+        }
+        j--
+    }
+
+    // diagonal to bottom right corner
+    j = col + 1
+    for (let i = row+1; i < 8; i++){
+        if (j > 7){
+            break
+        }
+        if (board[i][j]) {
+            if (board[i][j].color !== color){
+                if (board[i][j] instanceof Bishop || board[i][j] instanceof Queen) {
+                    return true
+                }
+                if (board[i][j] instanceof Pawn || board[i][j] instanceof King) {
+                    if (Math.abs(col - j) === 1) {
+                        return true
+                    }
+                }
+            }
+            break
+        }
+        j--
+    }
+
+    // check straights for queen, king, rook
+    // go as left as possible
+    for (let i = col - 1; i > -1; i--){
+        if (board[row][i]){
+            if (board[row][i]?.color !== color){
+                if (board[row][i] instanceof Queen || board[row][i] instanceof Rook) {
+                    return true
+                }
+                if (Math.abs(i-col) === 1 && board[row][i] instanceof King) {
+                    return true
+                }
+            }
+            break
+        }
+    }
+
+    // go as right as possible
+    for (let i = col + 1; i < 8; i++){
+        if (board[row][i]){
+            if (board[row][i]?.color !== color){
+                if (board[row][i] instanceof Queen || board[row][i] instanceof Rook) {
+                    return true
+                }
+                if (Math.abs(i-col) === 1 && board[row][i] instanceof King) {
+                    return true
+                }
+            }
+            break
+        }
+    }
+
+    // go as up as possible
+    for (let i = row - 1; i > -1; i--){
+        if (board[i][col]){
+            if (board[i][col]?.color !== color){
+                if (board[i][col] instanceof Queen || board[i][col] instanceof Rook) {
+                    return true
+                }
+                if (Math.abs(i-col) === 1 && board[i][col] instanceof King) {
+                    return true
+                }
+            }
+            break
+        }
+    }
+
+    // go as down as possible
+    for (let i = row + 1; i < 8; i++){
+        if (board[i][col]){
+            if (board[i][col]?.color !== color){
+                if (board[i][col] instanceof Queen || board[i][col] instanceof Rook) {
+                    return true
+                }
+                if (Math.abs(i-col) === 1 && board[i][col] instanceof King) {
+                    return true
+                }
+            }
+            break
+        }
+    }
+
+    // check for knights
+    const d_s = [[-2, -1], [-2, 1], [2, -1], [2, 1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
+    d_s.forEach(([dx, dy]) => {
+        if (row + dx > -1 && row + dx < 8) {
+            if (col + dy > -1 && col + dy < 8) {
+                if (board[row + dx][col + dy] && board[row + dx][col + dy].color !== color && board[row + dx][col + dy] instanceof Knight){
+                    return true
+                }
+            }
+        }
+    })
+    return false
 }
