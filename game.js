@@ -7,7 +7,6 @@ function generateBoardDisplay(){
             const square = document.createElement("div")
             board.insertAdjacentElement("beforeend", square)
             // sX for square number X
-            square.id =`s${8*row+col}`
             square.classList.add("square")
             square.dataset.row = `${row}`
             square.dataset.col = `${col}`
@@ -33,6 +32,11 @@ function placePieces() {
                 // dropping nonvalid square clears everything
                 piece_icon.addEventListener("dragstart", event => {
                     const curr_square = event.currentTarget.parentElement
+                    const curr_target = document.querySelector("#target")
+                    if (curr_target) {
+                        curr_target.id = ""
+                    }
+                    event.currentTarget.parentElement.id = "target"
                     const curr_row = parseInt(curr_square.dataset.row)
                     const curr_col = parseInt(curr_square.dataset.col)
 
@@ -42,11 +46,36 @@ function placePieces() {
                         square.classList.remove("possible-move")
                     })
 
+                    // select all squares that have possible-move class then add drop event
+                    // remove piece from the curr_square (or maybe mark the origin square with a class)
+                    // add it to the square that is dropped
+                    // move it on the board getting the drop square's data elements
+                    // remove possible-move from all squares
+
                     const valid_moves = board[curr_row][curr_col].getValidMoves(board)
                     valid_moves.forEach(valid_move => {
                         const move_square = document.querySelector(`[data-row='${valid_move[0]}'][data-col='${valid_move[1]}']`)
                         move_square.classList.add("possible-move")
+                        move_square.addEventListener("dragover", event => {
+                                // prevent default to allow drop
+                                event.preventDefault()
+                            }
+                        )
+                        move_square.addEventListener("drop", event => {
+                            const target = document.querySelector("#target")
+                            move_square.appendChild(target.children[0])
+                            target.innerHTML = ""
+                            board[target.dataset.row][target.dataset.col].move(move_square.dataset.row, move_square.dataset.col, board)
+
+                            const curr_active = document.querySelectorAll("div.possible-move")
+                            curr_active.forEach(square => {
+                                square.classList.remove("possible-move")
+                                // remove dragover event listener here too
+                            })
+                        })
                     })
+
+
                 })
 
                 if (piece.color === BLACK) {
