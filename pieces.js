@@ -1,5 +1,5 @@
 // todo: refactor especially queen
-import {checkThreat} from "./checkThreat";
+import {checkThreat} from "./checkThreat.js";
 
 class Piece {
     constructor(row, col, color) {
@@ -237,12 +237,12 @@ export class King extends Piece {
         // 4. The two squares that WILL BE occupied are not under threat (for the two squares backtrack the attack paths and see if there is enemy piece)
         if (this.bonus_move){
             if (board[this.row][7] && board[this.row][7] instanceof Rook && board[this.row][7].bonus_move && board[this.row][7].color === this.color) {
-                if (!board[this.row][6] && !board[this.row][5] && checkThreat([this.row, 6], board) && checkThreat([this.row, 5], board)) {
+                if (!board[this.row][6] && !board[this.row][5] && checkThreat(this.row, 6, board) && checkThreat(this.row, 5, board)) {
                     valid_moves.append([this.row][6])
                 }
             }
             if (board[this.row][0] && board[this.row][0] instanceof Rook && board[this.row][0].bonus_move && board[this.row][0].color === this.color) {
-                if (!board[this.row][2] && !board[this.row][3] && checkThreat([this.row][2]) && checkThreat([this.row][3])) {
+                if (!board[this.row][2] && !board[this.row][3] && checkThreat(this.row, 2, board) && checkThreat(this.row, 3, board)) {
                     valid_moves.append([this.row][2])
                 }
             }
