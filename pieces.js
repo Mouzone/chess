@@ -7,6 +7,19 @@ class Piece {
         this.valid_moves = []
     }
 
+    // write the checks here
+    // check top left
+    // check top right
+    // check bottom left
+    // check bottom right
+    // check straight up
+    // check straight back
+    // check straight left
+    // check straight right
+    // check knight
+    // for all checks other than knight add a limit parameter
+    // -- pawns can only check one in diagonal, one in straight up (or down depending on color), two in straight up
+
     move(row, col, board) {
         this.valid_moves.length = 0
         const piece = board[this.row][this.col]
