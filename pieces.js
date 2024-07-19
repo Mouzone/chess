@@ -4,6 +4,7 @@ class Piece {
         this.row = row
         this.col = col
         this.color = color
+        this.valid_moves = []
     }
 
     move(row, col, board) {
@@ -24,37 +25,37 @@ export class Pawn extends Piece {
     }
 
     getValidMoves(board){
-        const valid_moves = []
+        this.valid_moves.length = 0
         if (this.color){
             if (this.bonus_move){
-                valid_moves.push([this.row + 2, this.col])
+                this.valid_moves.push([this.row + 2, this.col])
             }
-            valid_moves.push([this.row + 1, this.col])
+            this.valid_moves.push([this.row + 1, this.col])
 
             //capture enemy piece
             // todo: make sure the logic is different for black and white
             if (this.col-1 > -1 && board[this.row+1][this.col-1] && board[this.row+1][this.col-1].color !== this.color) {
-                valid_moves.push([this.row+1, this.col-1])
+                this.valid_moves.push([this.row+1, this.col-1])
             }
             if (this.col+1 < 8 && board[this.row+1][this.col+1] && board[this.row+1][this.col+1].color !== this.color) {
-                valid_moves.push([this.row+1, this.col+1])
+                this.valid_moves.push([this.row+1, this.col+1])
             }
         } else {
             if (this.bonus_move){
-                valid_moves.push([this.row - 2, this.col])
+                this.valid_moves.push([this.row - 2, this.col])
             }
-            valid_moves.push([this.row - 1, this.col])
+            this.valid_moves.push([this.row - 1, this.col])
 
             //capture enemy piece
             if (this.col-1 > -1 && board[this.row-1][this.col-1] && board[this.row-1][this.col-1].color !== this.color) {
-                valid_moves.push([this.row+1, this.col-1])
+                this.valid_moves.push([this.row+1, this.col-1])
             }
             if (this.col+1 < 8 && board[this.row-1][this.col+1] && board[this.row-1][this.col+1].color !== this.color) {
-                valid_moves.push([this.row+1, this.col+1])
+                this.valid_moves.push([this.row+1, this.col+1])
             }
         }
 
-        return valid_moves
+        return this.valid_moves
     }
 
     move(row, col, board) {
@@ -71,51 +72,51 @@ export class Rook extends Piece {
     }
 
     getValidMoves(board){
-        const valid_moves = []
+        this.valid_moves.length = 0
         // go as left as possible
         for (let i = this.col - 1; i > -1; i--){
             if (board[this.row][i]){
                 if (board[this.row][i]?.color !== this.color){
-                    valid_moves.push([this.row, i])
+                    this.valid_moves.push([this.row, i])
                 }
                 break
             }
-            valid_moves.push([this.row, i])
+            this.valid_moves.push([this.row, i])
         }
 
         // go as right as possible
         for (let i = this.col + 1; i < 8; i++){
             if (board[this.row][i]){
                 if (board[this.row][i]?.color !== this.color){
-                    valid_moves.push([this.row, i])
+                    this.valid_moves.push([this.row, i])
                 }
                 break
             }
-            valid_moves.push([this.row, i])
+            this.valid_moves.push([this.row, i])
         }
 
         // go as up as possible
         for (let i = this.row - 1; i > -1; i--){
             if (board[i][this.col]){
                 if (board[i][this.col]?.color !== this.color){
-                    valid_moves.push([i, this.col])
+                    this.valid_moves.push([i, this.col])
                 }
                 break
             }
-            valid_moves.push([i, this.col])
+            this.valid_moves.push([i, this.col])
         }
 
         // go as down as possible
         for (let i = this.row + 1; i < 8; i++){
             if (board[i][this.col]){
                 if (board[i][this.col]?.color !== this.color){
-                    valid_moves.push([i, this.col])
+                    this.valid_moves.push([i, this.col])
                 }
                 break
             }
-            valid_moves.push([i, this.col])
+            this.valid_moves.push([i, this.col])
         }
-        return valid_moves
+        return this.valid_moves
     }
 
     move(row, col, board) {
@@ -126,26 +127,25 @@ export class Rook extends Piece {
 
 export class Knight extends Piece {
     getValidMoves(board){
-        const valid_moves = []
+        this.valid_moves.length = 0
         const d_s = [[-2, -1], [-2, 1], [2, -1], [2, 1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
         d_s.forEach(([dx, dy]) => {
             if (this.row + dx > -1 && this.row + dx < 8) {
                 if (this.col + dy > -1 && this.col + dy < 8) {
                     if (!board[this.row + dx][this.col + dy] || board[this.row + dx][this.col + dy].color !== this.color){
-                        valid_moves.push([this.row + dx, this.col + dy])
+                        this.valid_moves.push([this.row + dx, this.col + dy])
                     }
                 }
             }
         })
 
-        return valid_moves
+        return this.valid_moves
     }
 }
 
 export class Bishop extends Piece {
     getValidMoves(board){
-        const valid_moves = []
-
+        this.valid_moves.length = 0
         // diagonal to top left corner
         let j = this.col - 1
         for (let i = this.row-1; i > -1; i--){
@@ -154,11 +154,11 @@ export class Bishop extends Piece {
             }
             if (board[i][j]) {
                 if (board[i][j].color !== this.color){
-                    valid_moves.push([i, j])
+                    this.valid_moves.push([i, j])
                 }
                 break
             }
-            valid_moves.push([i, j])
+            this.valid_moves.push([i, j])
             j--
         }
 
@@ -170,11 +170,11 @@ export class Bishop extends Piece {
             }
             if (board[i][j]) {
                 if (board[i][j].color !== this.color){
-                    valid_moves.push([i, j])
+                    this.valid_moves.push([i, j])
                 }
                 break
             }
-            valid_moves.push([i, j])
+            this.valid_moves.push([i, j])
             j++
         }
 
@@ -186,11 +186,11 @@ export class Bishop extends Piece {
             }
             if (board[i][j]) {
                 if (board[i][j].color !== this.color){
-                    valid_moves.push([i, j])
+                    this.valid_moves.push([i, j])
                 }
                 break
             }
-            valid_moves.push([i, j])
+            this.valid_moves.push([i, j])
             j--
         }
         // diagonal to bottom right corner
@@ -201,14 +201,14 @@ export class Bishop extends Piece {
             }
             if (board[i][j]) {
                 if (board[i][j].color !== this.color){
-                    valid_moves.push([i, j])
+                    this.valid_moves.push([i, j])
                 }
                 break
             }
-            valid_moves.push([i, j])
+            this.valid_moves.push([i, j])
             j++
         }
-        return valid_moves
+        return this.valid_moves
     }
 }
 
@@ -220,12 +220,12 @@ export class King extends Piece {
     }
 
     getValidMoves(board){
-        const valid_moves = []
+        this.valid_moves.length = 0
         const d_s = [[1,0], [-1,0], [0,1], [0,-1], [1,1], [-1,-1], [1,-1], [-1,1]]
         d_s.forEach(([dx, dy]) => {
             if (this.row+dx < 8 && this.row+dx > -1 && this.col+dy < 8 && this.col+dy > -1){
                 if (!board[this.row + dx][this.col + dy] || (board[this.row + dx][this.col + dy] && board[this.row + dx][this.col + dy].color !== this.color)) {
-                    valid_moves.push([this.row+dx, this.col+dy])
+                    this.valid_moves.push([this.row+dx, this.col+dy])
                 }
             }
         })
@@ -238,17 +238,17 @@ export class King extends Piece {
         if (this.bonus_move){
             if (board[this.row][7] && board[this.row][7] instanceof Rook && board[this.row][7].bonus_move && board[this.row][7].color === this.color) {
                 if (!board[this.row][6] && !board[this.row][5] && !checkThreat(this.row, 6, this.color, board) && !checkThreat(this.row, 5, this.color, board)) {
-                    valid_moves.push([this.row, 6])
+                    this.valid_moves.push([this.row, 6])
                 }
             }
             if (board[this.row][0] && board[this.row][0] instanceof Rook && board[this.row][0].bonus_move && board[this.row][0].color === this.color) {
                 if (!board[this.row][1] && !board[this.row][2] && !checkThreat(this.row, 1, this.color, board) && !checkThreat(this.row, 2, this.color, board)) {
-                    valid_moves.push([this.row, 2])
+                    this.valid_moves.push([this.row, 2])
                 }
             }
         }
 
-        return valid_moves
+        return this.valid_moves
     }
 
     move(row, col, board) {
@@ -273,13 +273,13 @@ export class King extends Piece {
 
 export class Queen extends Piece {
     getValidMoves(board) {
-        const valid_moves = []
+        this.valid_moves.length = 0
         // go as left as possible
         for (let i = this.col - 1; i > -1; i--){
             if (board[this.row][i]){
                 break
             }
-            valid_moves.push([this.row, i])
+            this.valid_moves.push([this.row, i])
         }
 
         // go as right as possible
@@ -287,7 +287,7 @@ export class Queen extends Piece {
             if (board[this.row][i]){
                 break
             }
-            valid_moves.push([this.row, i])
+            this.valid_moves.push([this.row, i])
         }
 
         // go as up as possible
@@ -295,7 +295,7 @@ export class Queen extends Piece {
             if (board[i][this.col]){
                 break
             }
-            valid_moves.push([i, this.col])
+            this.valid_moves.push([i, this.col])
         }
 
         // go as down as possible
@@ -303,7 +303,7 @@ export class Queen extends Piece {
             if (board[i][this.col]){
                 break
             }
-            valid_moves.push([i, this.col])
+            this.valid_moves.push([i, this.col])
         }
 
         let j = this.col - 1
@@ -311,7 +311,7 @@ export class Queen extends Piece {
             if (j < 0 || board[i][j]){
                 break
             }
-            valid_moves.push([i, j])
+            this.valid_moves.push([i, j])
             j--
         }
 
@@ -321,7 +321,7 @@ export class Queen extends Piece {
             if (j === 8 || board[i][j]){
                 break
             }
-            valid_moves.push([i, j])
+            this.valid_moves.push([i, j])
             j++
         }
 
@@ -331,7 +331,7 @@ export class Queen extends Piece {
             if (j < 0 || board[i][j]){
                 break
             }
-            valid_moves.push([i, j])
+            this.valid_moves.push([i, j])
             j--
         }
         // diagonal to bottom right corner
@@ -340,11 +340,11 @@ export class Queen extends Piece {
             if (j === 8 || board[i][j]){
                 break
             }
-            valid_moves.push([i, j])
+            this.valid_moves.push([i, j])
             j++
         }
 
-        return valid_moves
+        return this.valid_moves
     }
 }
 
