@@ -8,6 +8,7 @@ class Piece {
     }
 
     move(row, col, board) {
+        this.valid_moves.length = 0
         const piece = board[this.row][this.col]
         board[this.row][this.col] = null
         this.row = row
@@ -25,7 +26,6 @@ export class Pawn extends Piece {
     }
 
     getValidMoves(board){
-        this.valid_moves.length = 0
         if (this.color){
             if (this.bonus_move){
                 this.valid_moves.push([this.row + 2, this.col])
@@ -72,7 +72,6 @@ export class Rook extends Piece {
     }
 
     getValidMoves(board){
-        this.valid_moves.length = 0
         // go as left as possible
         for (let i = this.col - 1; i > -1; i--){
             if (board[this.row][i]){
@@ -127,7 +126,6 @@ export class Rook extends Piece {
 
 export class Knight extends Piece {
     getValidMoves(board){
-        this.valid_moves.length = 0
         const d_s = [[-2, -1], [-2, 1], [2, -1], [2, 1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
         d_s.forEach(([dx, dy]) => {
             if (this.row + dx > -1 && this.row + dx < 8) {
@@ -145,7 +143,6 @@ export class Knight extends Piece {
 
 export class Bishop extends Piece {
     getValidMoves(board){
-        this.valid_moves.length = 0
         // diagonal to top left corner
         let j = this.col - 1
         for (let i = this.row-1; i > -1; i--){
@@ -220,7 +217,6 @@ export class King extends Piece {
     }
 
     getValidMoves(board){
-        this.valid_moves.length = 0
         const d_s = [[1,0], [-1,0], [0,1], [0,-1], [1,1], [-1,-1], [1,-1], [-1,1]]
         d_s.forEach(([dx, dy]) => {
             if (this.row+dx < 8 && this.row+dx > -1 && this.col+dy < 8 && this.col+dy > -1){
@@ -273,7 +269,6 @@ export class King extends Piece {
 
 export class Queen extends Piece {
     getValidMoves(board) {
-        this.valid_moves.length = 0
         // go as left as possible
         for (let i = this.col - 1; i > -1; i--){
             if (board[this.row][i]){

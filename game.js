@@ -8,6 +8,7 @@ import {King} from "./pieces.js";
 // todo: board update after capturing
 // todo: pawn promotion
 // todo: en passant
+// -- when moving a pawn with bonus move add to any pawns in the vicinity the en passant move
 function generateBoardDisplay(){
     const board = document.querySelector("div#board")
     for(let row = 0; row < 8; row++){
