@@ -84,10 +84,9 @@ function makeMoveSquareInteractive(valid_move) {
     const move_square = document.querySelector(`[data-row='${valid_move[0]}'][data-col='${valid_move[1]}']`)
     move_square.classList.add("possible-move")
     move_square.addEventListener("dragover", event => {
-            // prevent default to allow drop
-            event.preventDefault()
-        }
-    )
+        // prevent default to allow drop
+        event.preventDefault()
+    })
     move_square.addEventListener("drop", movePieceOnBoard)
 }
 
@@ -99,33 +98,33 @@ function movePieceOnBoard(event) {
 
     // refactor into checking castling
     // write a check en passant check
-    const is_king = board[target.dataset.row][target.dataset.col] instanceof King
-    board[target.dataset.row][target.dataset.col].move(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board)
-    if (Math.abs(move_square.dataset.col - target.dataset.col) === 2 && is_king) {
-        // grab nearest rook
-        // move it inside
-        if (parseInt(move_square.dataset.col) === 6) {
-            let rook = document.querySelector(`[data-row='${target.dataset.row}'][data-col='${7}']`)
-            let endSquare = document.querySelector(`[data-row='${target.dataset.row}'][data-col='${5}']`)
-            endSquare.appendChild(rook.children[0])
-            rook.innerHTML = ""
-        } else {
-            let rook = document.querySelector(`[data-row='${target.dataset.row}'][data-col='${0}']`)
-            let endSquare = document.querySelector(`[data-row='${target.dataset.row}'][data-col='${3}']`)
-            endSquare.appendChild(rook.children[0])
-            rook.innerHTML = ""
-        }
+    if (board[target.dataset.row][target.dataset.col] instanceof King && Math.abs(move_square.dataset.col - target.dataset.col) === 2){
+        castle(board[target.dataset.row][target.dataset.col], target, move_square)
+    } else {
+        board[target.dataset.row][target.dataset.col].move(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board)
     }
 
-    const curr_active = document.querySelectorAll("div.possible-move")
-    curr_active.forEach(square => {
-        square.classList.remove("possible-move")
-        // remove dragover event listener here too
-    })
-
-    const curr_target = document.querySelector("#target")
-    curr_target.id = ""
+    removePossibleMoves()
+    target.id = ""
     console.log(board)
+}
+
+function castle(king, curr_square, move_square) {
+    king.move(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board)
+    if (parseInt(move_square.dataset.col) === 6) {
+        let rook = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${7}']`)
+        let endSquare = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${5}']`)
+        endSquare.appendChild(rook.children[0])
+        rook.innerHTML = ""
+    } else {
+        let rook = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${0}']`)
+        let endSquare = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${3}']`)
+        endSquare.appendChild(rook.children[0])
+        rook.innerHTML = ""
+    }
+}
+
+function enPassant() {
 }
 
 function initializeGame(){
