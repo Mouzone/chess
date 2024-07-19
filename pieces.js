@@ -1,4 +1,5 @@
 // todo: refactor especially queen
+// todo: write getValidMoves function for each class and inside it call each check_function
 class Piece {
     constructor(row, col, color) {
         this.row = row
