@@ -1,5 +1,8 @@
 import Player from "./player.js"
+import {King} from "./pieces.js";
 
+// todo: remove event listener after dropping
+// todo: add logic for capturing squares
 function generateBoardDisplay(){
     const board = document.querySelector("div#board")
     for(let row = 0; row < 8; row++){
@@ -32,10 +35,7 @@ function placePieces() {
                 // dropping nonvalid square clears everything
                 piece_icon.addEventListener("dragstart", event => {
                     const curr_square = event.currentTarget.parentElement
-                    const curr_target = document.querySelector("#target")
-                    if (curr_target) {
-                        curr_target.id = ""
-                    }
+
                     event.currentTarget.parentElement.id = "target"
                     const curr_row = parseInt(curr_square.dataset.row)
                     const curr_col = parseInt(curr_square.dataset.col)
@@ -65,13 +65,31 @@ function placePieces() {
                             const target = document.querySelector("#target")
                             move_square.appendChild(target.children[0])
                             target.innerHTML = ""
-                            board[target.dataset.row][target.dataset.col].move(move_square.dataset.row, move_square.dataset.col, board)
-
+                            const is_king = board[target.dataset.row][target.dataset.col] instanceof King
+                            board[target.dataset.row][target.dataset.col].move(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board)
+                            if (Math.abs(move_square.dataset.col - target.dataset.col) === 2 && is_king) {
+                                // grab nearest rook
+                                // move it inside
+                                if (parseInt(move_square.dataset.col) === 6) {
+                                    let rook = document.querySelector(`[data-row='${target.dataset.row}'][data-col='${7}']`)
+                                    let endSquare = document.querySelector(`[data-row='${target.dataset.row}'][data-col='${5}']`)
+                                    endSquare.appendChild(rook.children[0])
+                                    rook.innerHTML = ""
+                                } else {
+                                    let rook = document.querySelector(`[data-row='${target.dataset.row}'][data-col='${0}']`)
+                                    let endSquare = document.querySelector(`[data-row='${target.dataset.row}'][data-col='${3}']`)
+                                    endSquare.appendChild(rook.children[0])
+                                    rook.innerHTML = ""
+                                }
+                            }
                             const curr_active = document.querySelectorAll("div.possible-move")
                             curr_active.forEach(square => {
                                 square.classList.remove("possible-move")
                                 // remove dragover event listener here too
                             })
+                            const curr_target = document.querySelector("#target")
+                            curr_target.id = ""
+                            console.log(board)
                         })
                     })
 

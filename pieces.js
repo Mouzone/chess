@@ -4,7 +4,6 @@ class Piece {
         this.row = row
         this.col = col
         this.color = color
-        this.alive = true
     }
 
     move(row, col, board) {
@@ -33,6 +32,7 @@ export class Pawn extends Piece {
             valid_moves.push([this.row + 1, this.col])
 
             //capture enemy piece
+            // todo: make sure the logic is different for black and white
             if (this.col-1 > -1 && board[this.row+1][this.col-1] && board[this.row+1][this.col-1].color !== this.color) {
                 valid_moves.push([this.row+1, this.col-1])
             }
@@ -248,21 +248,22 @@ export class King extends Piece {
             }
         }
 
-        console.log(!checkThreat(this.row, 5, this.color, board))
         return valid_moves
     }
 
     move(row, col, board) {
-        if (row === this.row && col-this.col === 2){
+        if (row === this.row && Math.abs(col-this.col) === 2){
             // MOVE the corresponding rook when castling
             if (col === 6) {
                 // get the rook at board[this.row][7]
                 // move the rook to board[this.row][5]
                 let rook = board[this.row][7]
                 rook.move(this.row, 5, board)
+                rook.bonus_move = false
             } else {
                 let rook = board[this.row][0]
                 rook.move(this.row, 3, board)
+                rook.bonus_move = false
             }
         }
         super.move(row, col, board)
@@ -348,7 +349,6 @@ export class Queen extends Piece {
 }
 
 function checkThreat(row, col, color, board) {
-    console.log(row, col)
     // check in each direction for the first piece it encounters as enemy cannot hop over own pieces
     // -- except for knight
     // return True right away if any piece is found
