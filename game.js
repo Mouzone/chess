@@ -1,8 +1,6 @@
 import Player from "./player.js"
 import {King} from "./pieces.js";
 
-// todo: refactor!!!!
-// todo: remove event listener after dropping
 // todo: add logic for capturing squares
 // -- pawn movement
 // todo: board update after capturing
@@ -77,16 +75,15 @@ function removePossibleMoves() {
     const curr_active = document.querySelectorAll("div.possible-move")
     curr_active?.forEach(square => {
         square.classList.remove("possible-move")
+        square.removeEventListener("dragover", handleDragOver);
+        square.removeEventListener("drop", movePieceOnBoard)
     })
 }
 
 function makeMoveSquareInteractive(valid_move) {
     const move_square = document.querySelector(`[data-row='${valid_move[0]}'][data-col='${valid_move[1]}']`)
     move_square.classList.add("possible-move")
-    move_square.addEventListener("dragover", event => {
-        // prevent default to allow drop
-        event.preventDefault()
-    })
+    move_square.addEventListener("dragover", handleDragOver);
     move_square.addEventListener("drop", movePieceOnBoard)
 }
 
@@ -96,8 +93,7 @@ function movePieceOnBoard(event) {
     move_square.appendChild(target.children[0])
     target.innerHTML = ""
 
-    // refactor into checking castling
-    // write a check en passant check
+    // todo: write in an check en passant check
     if (board[target.dataset.row][target.dataset.col] instanceof King && Math.abs(move_square.dataset.col - target.dataset.col) === 2){
         castle(board[target.dataset.row][target.dataset.col], target, move_square)
     } else {
@@ -110,21 +106,25 @@ function movePieceOnBoard(event) {
 }
 
 function castle(king, curr_square, move_square) {
+    // todo: rewrite this into a rook and king move
     king.move(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board)
+
+    let rook = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${0}']`)
+    let endSquare = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${3}']`)
     if (parseInt(move_square.dataset.col) === 6) {
         let rook = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${7}']`)
         let endSquare = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${5}']`)
-        endSquare.appendChild(rook.children[0])
-        rook.innerHTML = ""
-    } else {
-        let rook = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${0}']`)
-        let endSquare = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${3}']`)
-        endSquare.appendChild(rook.children[0])
-        rook.innerHTML = ""
     }
+    endSquare.appendChild(rook.children[0])
+    rook.innerHTML = ""
 }
 
 function enPassant() {
+}
+
+function handleDragOver(event) {
+    // prevent default to allow drop
+    event.preventDefault();
 }
 
 function initializeGame(){

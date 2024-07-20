@@ -261,6 +261,8 @@ export class King extends Piece {
         return this.valid_moves
     }
 
+    // todo: only move the king and remove the rook move logic here
+    // -- keep the bonus_move logic here
     move(row, col, board) {
         if (row === this.row && Math.abs(col-this.col) === 2){
             // MOVE the corresponding rook when castling
