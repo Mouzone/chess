@@ -106,20 +106,32 @@ function movePieceOnBoard(event) {
 }
 
 function castle(king, curr_square, move_square) {
-    // todo: rewrite this into a rook and king move
     king.move(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board)
 
-    let rook = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${0}']`)
+    // move rook on board_display and move rook on board
+    let rook_element = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${0}']`)
+    let rook = board[curr_square.dataset.row][0]
     let endSquare = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${3}']`)
+    let col = 3
+
     if (parseInt(move_square.dataset.col) === 6) {
-        let rook = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${7}']`)
-        let endSquare = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${5}']`)
+        rook_element = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${7}']`)
+        rook = board[curr_square.dataset.row][7]
+        endSquare = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${5}']`)
+        col = 5
     }
-    endSquare.appendChild(rook.children[0])
-    rook.innerHTML = ""
+    rook.move(curr_square.dataset.row, col, board)
+    rook.bonus_move = false
+
+    endSquare.appendChild(rook_element.children[0])
+    rook_element.innerHTML = ""
 }
 
 function enPassant() {
+}
+
+function pawnPromotion() {
+
 }
 
 function handleDragOver(event) {

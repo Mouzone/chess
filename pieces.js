@@ -8,19 +8,6 @@ class Piece {
         this.valid_moves = []
     }
 
-    // write the checks here
-    // check top left
-    // check top right
-    // check bottom left
-    // check bottom right
-    // check straight up
-    // check straight back
-    // check straight left
-    // check straight right
-    // check knight
-    // for all checks other than knight add a limit parameter
-    // -- pawns can only check one in diagonal, one in straight up (or down depending on color), two in straight up
-
     move(row, col, board) {
         this.valid_moves.length = 0
         const piece = board[this.row][this.col]
@@ -31,8 +18,6 @@ class Piece {
     }
 }
 
-// todo: en passant
-// todo: promotion
 export class Pawn extends Piece {
     constructor(row, col, color) {
         super(row, col, color)
@@ -264,20 +249,6 @@ export class King extends Piece {
     // todo: only move the king and remove the rook move logic here
     // -- keep the bonus_move logic here
     move(row, col, board) {
-        if (row === this.row && Math.abs(col-this.col) === 2){
-            // MOVE the corresponding rook when castling
-            if (col === 6) {
-                // get the rook at board[this.row][7]
-                // move the rook to board[this.row][5]
-                let rook = board[this.row][7]
-                rook.move(this.row, 5, board)
-                rook.bonus_move = false
-            } else {
-                let rook = board[this.row][0]
-                rook.move(this.row, 3, board)
-                rook.bonus_move = false
-            }
-        }
         super.move(row, col, board)
         this.bonus_move = false
     }
@@ -359,6 +330,7 @@ export class Queen extends Piece {
     }
 }
 
+// for checkthreat with the piece encountered check if it is the appropriate threat piece
 function checkThreat(row, col, color, board) {
     // check in each direction for the first piece it encounters as enemy cannot hop over own pieces
     // -- except for knight
@@ -528,3 +500,60 @@ function checkThreat(row, col, color, board) {
     })
     return false
 }
+
+// write the checks here
+// todo: add a limit for pawn
+// - or just write its own checks
+
+
+// -check top left
+function checkTopLeft(row, col, board) {
+    let j = col - 1
+    for (let i = row-1; i > -1; i--){
+        if (board[i][j] || j < 0) {
+            return board[i][j]
+        }
+        j--
+    }
+}
+
+// -check top right
+function checkTopRight(row, col, board) {
+    let j = col + 1
+    for (let i = row-1; i > -1; i--){
+        if (board[i][j] || j > 7) {
+            return board[i][j]
+        }
+        j--
+    }
+}
+
+// -check bottom left
+function checkBottomLeft(row, col, board) {
+    let j = col - 1
+    for (let i = row+1; i < 8; i++){
+        if (board[i][j] || j < 0) {
+            return board[i][j]
+        }
+        j--
+    }
+}
+
+// -check bottom right
+function checkBottomRight(row, col, color, board) {
+    let j = col + 1
+    for (let i = row+1; i < 8; i++){
+        if (board[i][j] || j > 7) {
+            return board[i][j]
+        }
+        j--
+    }
+}
+// -check straight up
+// -check straight back
+// -check straight left
+// -check straight right
+// -check knight
+// -for all checks other than knight add a limit parameter
+// --- pawns can only check one in diagonal, one in straight up (or down depending on color), two in straight up
+// for each function return the piece they encounter else return null
