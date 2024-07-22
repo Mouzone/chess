@@ -528,7 +528,7 @@ function checkTopLeft(row, col, limit=0, board) {
 }
 
 // -check top right
-function checkTopRight(row, col, limit=7, board) {
+function checkTopRight(row, col, limit=0, board) {
     let j = col + 1
     limit = Math.min(7, col + limit)
     for (let i = row-1; i > -1; i--){
@@ -552,7 +552,7 @@ function checkBottomLeft(row, col, limit=0, board) {
 }
 
 // -check bottom right
-function checkBottomRight(row, col, limit=7, board) {
+function checkBottomRight(row, col, limit=0, board) {
     let j = col + 1
     limit = Math.min(7, col + limit)
     for (let i = row+1; i < 8; i++){
@@ -564,24 +564,43 @@ function checkBottomRight(row, col, limit=7, board) {
 }
 
 // -check straight up
-function checkStraightUp(row, col, board) {
-    
+function checkStraightUp(row, col, limit=0, board) {
+    limit = Math.max(0, row-limit)
+    for (let i = row - 1; i > -1; i--) {
+        if (board[i][col] || i === limit) {
+            return board[i][col]
+        }
+    }
 }
 
-// -check straight back
-function checkStraightDown(row, col, board) {
-
+// -check straight down
+function checkStraightDown(row, col, limit=0, board) {
+    limit = Math.min(7, row + limit)
+    for (let i = row + 1; i < 8; i++){
+        if (board[i][col] || i === limit) {
+            return board[i][col]
+        }
+    }
 }
 
 // -check straight left
-function checkStraightLeft(row, col, board) {
-
+function checkStraightLeft(row, col, limit=0, board) {
+    limit = Math.max(0, col - limit)
+    for (let i = col - 1; i > -1; i--){
+        if (board[row][i] || i === limit) {
+            return board[row][i]
+        }
+    }
 }
 
 // -check straight right
-function checkStraightRight(row, col, board) {
-
-}
+function checkStraightRight(row, col, limit=0, board) {
+    limit = Math.min(7, col + limit)
+    for (let i = col + 1; i < 8; i++){
+        if (board[row][i] || i === limit){
+            return board[row][i]
+    }
+} 
 
 // -check knight
 function checkKnight(row, col, board) {
