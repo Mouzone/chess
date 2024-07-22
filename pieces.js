@@ -1,5 +1,9 @@
 // todo: refactor especially queen
 // todo: write getValidMoves function for each class and inside it call each check_function
+// todo: white pawn movement
+// todo: pawns check for collision
+// todo: queen capture enemy pieces
+
 class Piece {
     constructor(row, col, color) {
         this.row = row
@@ -501,16 +505,22 @@ function checkThreat(row, col, color, board) {
     return false
 }
 
-// write the checks here
 // todo: add a limit for pawn
 // - or just write its own checks
+// -for all checks other than knight add a limit parameter
+// --- pawns can only check one in diagonal, one in straight up (or down depending on color), two in straight up
 
+// pathing checks
+// each function returns either null or the first piece it encounters
 
 // -check top left
-function checkTopLeft(row, col, board) {
+function checkTopLeft(row, col, limit=0, board) {
     let j = col - 1
+    // by default should be 0 as the last square
+    // else last square is col - limit unless col - limit is negative
+    limit = Math.max(0, col - limit)
     for (let i = row-1; i > -1; i--){
-        if (board[i][j] || j < 0) {
+        if (board[i][j] || j === limit) {
             return board[i][j]
         }
         j--
@@ -518,10 +528,11 @@ function checkTopLeft(row, col, board) {
 }
 
 // -check top right
-function checkTopRight(row, col, board) {
+function checkTopRight(row, col, limit=7, board) {
     let j = col + 1
+    limit = Math.min(7, col + limit)
     for (let i = row-1; i > -1; i--){
-        if (board[i][j] || j > 7) {
+        if (board[i][j] || j === limit) {
             return board[i][j]
         }
         j--
@@ -529,10 +540,11 @@ function checkTopRight(row, col, board) {
 }
 
 // -check bottom left
-function checkBottomLeft(row, col, board) {
+function checkBottomLeft(row, col, limit=0, board) {
     let j = col - 1
+    limit = Math.max(0, col - limit)
     for (let i = row+1; i < 8; i++){
-        if (board[i][j] || j < 0) {
+        if (board[i][j] || j === limit) {
             return board[i][j]
         }
         j--
@@ -540,20 +552,39 @@ function checkBottomLeft(row, col, board) {
 }
 
 // -check bottom right
-function checkBottomRight(row, col, color, board) {
+function checkBottomRight(row, col, limit=7, board) {
     let j = col + 1
+    limit = Math.min(7, col + limit)
     for (let i = row+1; i < 8; i++){
-        if (board[i][j] || j > 7) {
+        if (board[i][j] || j === limit) {
             return board[i][j]
         }
         j--
     }
 }
+
 // -check straight up
+function checkStraightUp(row, col, board) {
+    
+}
+
 // -check straight back
+function checkStraightDown(row, col, board) {
+
+}
+
 // -check straight left
+function checkStraightLeft(row, col, board) {
+
+}
+
 // -check straight right
+function checkStraightRight(row, col, board) {
+
+}
+
 // -check knight
-// -for all checks other than knight add a limit parameter
-// --- pawns can only check one in diagonal, one in straight up (or down depending on color), two in straight up
-// for each function return the piece they encounter else return null
+function checkKnight(row, col, board) {
+
+}
+

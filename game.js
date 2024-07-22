@@ -1,12 +1,6 @@
 import Player from "./player.js"
 import {King} from "./pieces.js";
 
-// todo: add logic for capturing squares
-// -- pawn movement
-// todo: board update after capturing
-
-// todo: pawn check for collision
-// todo: queen capture enemy pieces
 // todo: pawn promotion
 // -- add a new piece to board_display, board and player of appropriate color
 // todo: en passant
@@ -89,6 +83,7 @@ function makeMoveSquareInteractive(valid_move) {
 
 function movePieceOnBoard(event) {
     const move_square = event.currentTarget
+    captureSquare(move_square)
     const target = document.querySelector("#target")
     move_square.appendChild(target.children[0])
     target.innerHTML = ""
@@ -120,11 +115,17 @@ function castle(king, curr_square, move_square) {
         endSquare = document.querySelector(`[data-row='${curr_square.dataset.row}'][data-col='${5}']`)
         col = 5
     }
+
     rook.move(curr_square.dataset.row, col, board)
     rook.bonus_move = false
 
     endSquare.appendChild(rook_element.children[0])
     rook_element.innerHTML = ""
+}
+
+function captureSquare(square) {
+    square.innerHTML = ""
+    board[square.dataset.row][square.dataset.col] = null
 }
 
 function enPassant() {
@@ -134,8 +135,8 @@ function pawnPromotion() {
 
 }
 
+// prevent default to allow drop
 function handleDragOver(event) {
-    // prevent default to allow drop
     event.preventDefault();
 }
 
