@@ -30,22 +30,45 @@ export class Pawn extends Piece {
     getValidMoves(board){
         let limit = 1
         if (this.color) {
-            let bottom_right = checkBottomRight(this.row, this.col, limit, board)
-            if (!bottom_right || bottom_right.color !== this.color) {
+            const bottom_right = checkBottomRight(this.row, this.col, limit, board)
+            if (!bottom_right.piece || (bottom_right.piece && bottom_right.color !== this.color)) {
+                this.valid_moves.push(bottom_right.position)
+            }
 
+            const bottom_left = checkBottomLeft(this.row, this.col, limit, board)
+            if (!bottom_left.piece || (bottom_left.piece && bottom_left.color !== this.color)) {
+                this.valid_moves.push(bottom_left.position)
             }
-            checkBottomLeft(this.row, this.col, limit, board)
+
             if (this.bonus_move) {
                 limit = 2
             }
-            checkStraightDown(this.row, this.col, limit, board)
+            const straight_down = checkStraightDown(this.row, this.col, limit, board)
+            if (!straight_down.piece || (straight_down.piece && straight_down.color !== this.color)) {
+                for (let i = 0; i <= straight_down.position[1]; i++) {
+                    this.valid_moves.push([i, bottom_left.position[1]])
+                }
+            }
         } else {
-            checkTopLeft(this.row, this.col, limit, board)
-            checkTopRight(this.row, this.col, limit, board)
+            const top_right = checkTopRight(this.row, this.col, limit, board)
+            if (!top_right.piece || (top_right.piece && top_right.color !== this.color)) {
+                this.valid_moves.push(top_right.position)
+            }
+
+            const top_left = checkTopLeft(this.row, this.col, limit, board)
+            if (!top_left.piece || (top_left.piece && top_left.color !== this.color)) {
+                this.valid_moves.push(top_left.position)
+            }
+
             if (this.bonus_move) {
                 limit = 2
             }
-            checkStraightUp(this.row, this.col, limit, board)
+            const straight_up = checkStraightUp(this.row, this.col, limit, board)
+            if (!straight_up.piece || (straight_up.piece && straight_up.color !== this.color)) {
+                for (let i = 0; i <= straight_up.position[1]; i++) {
+                    this.valid_moves.push([i, straight_up.position[1]])
+                }
+            }
         }
 
         return this.valid_moves
@@ -65,50 +88,37 @@ export class Rook extends Piece {
     }
 
     getValidMoves(board){
-        // go as left as possible
-        for (let i = this.col - 1; i > -1; i--){
-            if (board[this.row][i]){
-                if (board[this.row][i]?.color !== this.color){
-                    this.valid_moves.push([this.row, i])
-                }
-                break
-            }
-            this.valid_moves.push([this.row, i])
+        const up = checkStraightUp(this.row, this.col, board)
+        for (let i = this.row - 1; i > up.position[0]; i--) {
+            this.valid_moves.push([i, up.position[1]])
+        }
+        if (up.piece.color !== this.color) {
+            this.valid_moves.push(up.position)
         }
 
-        // go as right as possible
-        for (let i = this.col + 1; i < 8; i++){
-            if (board[this.row][i]){
-                if (board[this.row][i]?.color !== this.color){
-                    this.valid_moves.push([this.row, i])
-                }
-                break
-            }
-            this.valid_moves.push([this.row, i])
+        const down = checkStraightDown(this.row, this.col, board)
+        for (let i = this.row + 1; i < down.position[0]; i++) {
+            this.valid_moves.push([i, down.position[1]])
+        }
+        if (down.piece.color !== this.color) {
+            this.valid_moves.push(down.position)
         }
 
-        // go as up as possible
-        for (let i = this.row - 1; i > -1; i--){
-            if (board[i][this.col]){
-                if (board[i][this.col]?.color !== this.color){
-                    this.valid_moves.push([i, this.col])
-                }
-                break
-            }
-            this.valid_moves.push([i, this.col])
+        const left = checkStraightLeft(this.row, this.col, board)
+        for (let j = this.row - 1; j > left.position[1]; j--) {
+            this.valid_moves.push([left.position[0], j])
+        }
+        if (left.piece.color !== this.color) {
+            this.valid_moves.push(left.position)
         }
 
-        // go as down as possible
-        for (let i = this.row + 1; i < 8; i++){
-            if (board[i][this.col]){
-                if (board[i][this.col]?.color !== this.color){
-                    this.valid_moves.push([i, this.col])
-                }
-                break
-            }
-            this.valid_moves.push([i, this.col])
+        const right = checkStraightRight(this.row, this.col, board)
+        for (let j = this.row + 1; j < left.position[1]; j++) {
+            this.valid_moves.push([right.position[0], j])
         }
-        return this.valid_moves
+        if (right.piece.color !== this.color) {
+            this.valid_moves.push(right.position)
+        }
     }
 
     move(row, col, board) {
