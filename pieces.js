@@ -1,4 +1,3 @@
-// todo: refactor especially queen
 // todo: write getValidMoves function for each class and inside it call each check_function
 // todo: white pawn movement
 // todo: pawns check for collision
@@ -29,33 +28,24 @@ export class Pawn extends Piece {
     }
 
     getValidMoves(board){
-        if (this.color){
-            if (this.bonus_move){
-                this.valid_moves.push([this.row + 2, this.col])
-            }
-            this.valid_moves.push([this.row + 1, this.col])
+        let limit = 1
+        if (this.color) {
+            let bottom_right = checkBottomRight(this.row, this.col, limit, board)
+            if (!bottom_right || bottom_right.color !== this.color) {
 
-            //capture enemy piece
-            // todo: make sure the logic is different for black and white
-            if (this.col-1 > -1 && board[this.row+1][this.col-1] && board[this.row+1][this.col-1].color !== this.color) {
-                this.valid_moves.push([this.row+1, this.col-1])
             }
-            if (this.col+1 < 8 && board[this.row+1][this.col+1] && board[this.row+1][this.col+1].color !== this.color) {
-                this.valid_moves.push([this.row+1, this.col+1])
+            checkBottomLeft(this.row, this.col, limit, board)
+            if (this.bonus_move) {
+                limit = 2
             }
+            checkStraightDown(this.row, this.col, limit, board)
         } else {
-            if (this.bonus_move){
-                this.valid_moves.push([this.row - 2, this.col])
+            checkTopLeft(this.row, this.col, limit, board)
+            checkTopRight(this.row, this.col, limit, board)
+            if (this.bonus_move) {
+                limit = 2
             }
-            this.valid_moves.push([this.row - 1, this.col])
-
-            //capture enemy piece
-            if (this.col-1 > -1 && board[this.row-1][this.col-1] && board[this.row-1][this.col-1].color !== this.color) {
-                this.valid_moves.push([this.row+1, this.col-1])
-            }
-            if (this.col+1 < 8 && board[this.row-1][this.col+1] && board[this.row-1][this.col+1].color !== this.color) {
-                this.valid_moves.push([this.row+1, this.col+1])
-            }
+            checkStraightUp(this.row, this.col, limit, board)
         }
 
         return this.valid_moves
@@ -505,10 +495,6 @@ function checkThreat(row, col, color, board) {
     return false
 }
 
-// todo: add a limit for pawn
-// - or just write its own checks
-// -for all checks other than knight add a limit parameter
-// --- pawns can only check one in diagonal, one in straight up (or down depending on color), two in straight up
 
 // pathing checks
 // each function returns either null or the first piece it encounters
@@ -521,7 +507,8 @@ function checkTopLeft(row, col, limit=0, board) {
     limit = Math.max(0, col - limit)
     for (let i = row-1; i > -1; i--){
         if (board[i][j] || j === limit) {
-            return board[i][j]
+            return {piece: board[i][j],
+                position: [i, j]}
         }
         j--
     }
@@ -533,7 +520,8 @@ function checkTopRight(row, col, limit=0, board) {
     limit = Math.min(7, col + limit)
     for (let i = row-1; i > -1; i--){
         if (board[i][j] || j === limit) {
-            return board[i][j]
+            return {piece: board[i][j],
+                position: [i, j]}
         }
         j--
     }
@@ -545,7 +533,8 @@ function checkBottomLeft(row, col, limit=0, board) {
     limit = Math.max(0, col - limit)
     for (let i = row+1; i < 8; i++){
         if (board[i][j] || j === limit) {
-            return board[i][j]
+            return {piece: board[i][j],
+                position: [i,j]}
         }
         j--
     }
@@ -557,7 +546,8 @@ function checkBottomRight(row, col, limit=0, board) {
     limit = Math.min(7, col + limit)
     for (let i = row+1; i < 8; i++){
         if (board[i][j] || j === limit) {
-            return board[i][j]
+            return {piece: board[i][j],
+                position: [i,j]}
         }
         j--
     }
@@ -568,7 +558,8 @@ function checkStraightUp(row, col, limit=0, board) {
     limit = Math.max(0, row-limit)
     for (let i = row - 1; i > -1; i--) {
         if (board[i][col] || i === limit) {
-            return board[i][col]
+            return {piece: board[i][col],
+                position: [i, col]}
         }
     }
 }
@@ -578,7 +569,8 @@ function checkStraightDown(row, col, limit=0, board) {
     limit = Math.min(7, row + limit)
     for (let i = row + 1; i < 8; i++){
         if (board[i][col] || i === limit) {
-            return board[i][col]
+            return {piece: board[i][col],
+                position: [i, col]}
         }
     }
 }
@@ -588,7 +580,8 @@ function checkStraightLeft(row, col, limit=0, board) {
     limit = Math.max(0, col - limit)
     for (let i = col - 1; i > -1; i--){
         if (board[row][i] || i === limit) {
-            return board[row][i]
+            return {piece: board[row][i],
+                position: [row, i]}
         }
     }
 }
@@ -596,14 +589,26 @@ function checkStraightLeft(row, col, limit=0, board) {
 // -check straight right
 function checkStraightRight(row, col, limit=0, board) {
     limit = Math.min(7, col + limit)
-    for (let i = col + 1; i < 8; i++){
-        if (board[row][i] || i === limit){
-            return board[row][i]
+    for (let i = col + 1; i < 8; i++) {
+        if (board[row][i] || i === limit) {
+            return {piece: board[row][i],
+                position: [row, i]}
+        }
     }
-} 
+}
 
 // -check knight
 function checkKnight(row, col, board) {
-
+    const d_s = [[-2, -1], [-2, 1], [2, -1], [2, 1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
+    const moves = []
+    d_s.forEach(([dx, dy]) => {
+        if (row + dx > -1 && row + dx < 8) {
+            if (col + dy > -1 && col + dy < 8) {
+                moves.push({piece: board[row + dx][col + dy], position: [row+dx, col+dy]})
+            }
+        }
+    })
+    return moves
 }
+
 
