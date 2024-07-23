@@ -119,6 +119,8 @@ export class Rook extends Piece {
         if (right.piece.color !== this.color) {
             this.valid_moves.push(right.position)
         }
+
+        return this.valid_moves
     }
 
     move(row, col, board) {
@@ -129,14 +131,10 @@ export class Rook extends Piece {
 
 export class Knight extends Piece {
     getValidMoves(board){
-        const d_s = [[-2, -1], [-2, 1], [2, -1], [2, 1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
-        d_s.forEach(([dx, dy]) => {
-            if (this.row + dx > -1 && this.row + dx < 8) {
-                if (this.col + dy > -1 && this.col + dy < 8) {
-                    if (!board[this.row + dx][this.col + dy] || board[this.row + dx][this.col + dy].color !== this.color){
-                        this.valid_moves.push([this.row + dx, this.col + dy])
-                    }
-                }
+        const moves = checkKnight(this.row, this.col, board)
+        moves.forEach(move => {
+            if (!move.piece || (move.piece && move.piece.color !== this.color)) {
+                this.valid_moves.push(move.position)
             }
         })
 
@@ -145,69 +143,12 @@ export class Knight extends Piece {
 }
 
 export class Bishop extends Piece {
-    getValidMoves(board){
-        // diagonal to top left corner
-        let j = this.col - 1
-        for (let i = this.row-1; i > -1; i--){
-            if (j < 0){
-                break
-            }
-            if (board[i][j]) {
-                if (board[i][j].color !== this.color){
-                    this.valid_moves.push([i, j])
-                }
-                break
-            }
-            this.valid_moves.push([i, j])
-            j--
-        }
+    getValidMoves(board) {
+        const top_left = checkTopLeft(this.row, this.col, board)
+        const top_right = checkTopRight(this.row, this.col, board)
+        const bottom_left = checkBottomLeft(this.row, this.col, board)
+        const bottom_right = checkBottomRight(this.row, this.col, board)
 
-        // diagonal to top right corner
-        j = this.col + 1
-        for (let i = this.row-1; i > -1; i--){
-            if (j > 7){
-                break
-            }
-            if (board[i][j]) {
-                if (board[i][j].color !== this.color){
-                    this.valid_moves.push([i, j])
-                }
-                break
-            }
-            this.valid_moves.push([i, j])
-            j++
-        }
-
-        // diagonal to bottom left corner
-        j = this.col - 1
-        for (let i = this.row+1; i < 8; i++){
-            if (j < 0){
-                break
-            }
-            if (board[i][j]) {
-                if (board[i][j].color !== this.color){
-                    this.valid_moves.push([i, j])
-                }
-                break
-            }
-            this.valid_moves.push([i, j])
-            j--
-        }
-        // diagonal to bottom right corner
-        j = this.col + 1
-        for (let i = this.row+1; i < 8; i++){
-            if (j > 7){
-                break
-            }
-            if (board[i][j]) {
-                if (board[i][j].color !== this.color){
-                    this.valid_moves.push([i, j])
-                }
-                break
-            }
-            this.valid_moves.push([i, j])
-            j++
-        }
         return this.valid_moves
     }
 }
@@ -334,191 +275,43 @@ export class Queen extends Piece {
     }
 }
 
-// for checkthreat with the piece encountered check if it is the appropriate threat piece
+// check if the square/piece is under threat by any pieces close by
 function checkThreat(row, col, color, board) {
-    // check in each direction for the first piece it encounters as enemy cannot hop over own pieces
-    // -- except for knight
-    // return True right away if any piece is found
-    // return False at end if no piece is found
-
-    // check diagonal for bishop, pawn, queen, king
-    // diagonal to top left corner
-    let j = col - 1
-    for (let i = row-1; i > -1; i--){
-        if (j < 0){
-            break
-        }
-        if (board[i][j]) {
-            if (board[i][j].color !== color){
-                if (board[i][j] instanceof Bishop || board[i][j] instanceof Queen) {
-                    return true
-                }
-                if (board[i][j] instanceof Pawn || board[i][j] instanceof King) {
-                    if (Math.abs(col - j) === 1) {
-                        return true
-                    }
-                }
-            }
-            break
-        }
-        j--
-    }
-
-    // diagonal to top right corner
-    j = col + 1
-    for (let i = row-1; i > -1; i--){
-        if (j > 7){
-            break
-        }
-        if (board[i][j]) {
-            if (board[i][j].color !== color){
-                if (board[i][j] instanceof Bishop || board[i][j] instanceof Queen) {
-                    return true
-                }
-                if (board[i][j] instanceof Pawn || board[i][j] instanceof King) {
-                    if (Math.abs(col - j) === 1) {
-                        return true
-                    }
-                }
-            }
-            break
-        }
-        j--
-    }
-
-    // diagonal to bottom left corner
-    j = col - 1
-    for (let i = row+1; i < 8; i++){
-        if (j < 0){
-            break
-        }
-        if (board[i][j]) {
-            if (board[i][j].color !== color){
-                if (board[i][j] instanceof Bishop || board[i][j] instanceof Queen) {
-                    return true
-                }
-                if (board[i][j] instanceof Pawn || board[i][j] instanceof King) {
-                    if (Math.abs(col - j) === 1) {
-                        return true
-                    }
-                }
-            }
-            break
-        }
-        j--
-    }
-
-    // diagonal to bottom right corner
-    j = col + 1
-    for (let i = row+1; i < 8; i++){
-        if (j > 7){
-            break
-        }
-        if (board[i][j]) {
-            if (board[i][j].color !== color){
-                if (board[i][j] instanceof Bishop || board[i][j] instanceof Queen) {
-                    return true
-                }
-                if (board[i][j] instanceof Pawn || board[i][j] instanceof King) {
-                    if (Math.abs(col - j) === 1) {
-                        return true
-                    }
-                }
-            }
-            break
-        }
-        j--
-    }
-
-    // check straights for queen, king, rook
-    // go as left as possible
-    for (let i = col - 1; i > -1; i--){
-        if (board[row][i]){
-            if (board[row][i]?.color !== color){
-                if (board[row][i] instanceof Queen || board[row][i] instanceof Rook) {
-                    return true
-                }
-                if (Math.abs(i-col) === 1 && board[row][i] instanceof King) {
-                    return true
-                }
-            }
-            break
-        }
-    }
-
-    // go as right as possible
-    for (let i = col + 1; i < 8; i++){
-        if (board[row][i]){
-            if (board[row][i]?.color !== color){
-                if (board[row][i] instanceof Queen || board[row][i] instanceof Rook) {
-                    return true
-                }
-                if (Math.abs(i-col) === 1 && board[row][i] instanceof King) {
-                    return true
-                }
-            }
-            break
-        }
-    }
-
-    // go as up as possible
-    for (let i = row - 1; i > -1; i--){
-        if (board[i][col]){
-            if (board[i][col]?.color !== color){
-                if (board[i][col] instanceof Queen || board[i][col] instanceof Rook) {
-                    return true
-                }
-                if (Math.abs(i-col) === 1 && board[i][col] instanceof King) {
-                    return true
-                }
-            }
-            break
-        }
-    }
-
-    // go as down as possible
-    for (let i = row + 1; i < 8; i++){
-        if (board[i][col]){
-            if (board[i][col]?.color !== color){
-                if (board[i][col] instanceof Queen || board[i][col] instanceof Rook) {
-                    return true
-                }
-                if (Math.abs(i-col) === 1 && board[i][col] instanceof King) {
-                    return true
-                }
-            }
-            break
-        }
-    }
-
-    // check for knights
-    const d_s = [[-2, -1], [-2, 1], [2, -1], [2, 1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
-    d_s.forEach(([dx, dy]) => {
-        if (row + dx > -1 && row + dx < 8) {
-            if (col + dy > -1 && col + dy < 8) {
-                if (board[row + dx][col + dy] && board[row + dx][col + dy].color !== color && board[row + dx][col + dy] instanceof Knight){
-                    return true
-                }
-            }
-        }
-    })
-    return false
+//     checkTopLeft
+    // checkTopRight
+    // checkBottomLeft
+    // checkBottomRight
+    // checkStraightUp
+    // checkStraightDown
+    // checkStraightLeft
+    // checkStraightRight
+    // checkKnight
 }
 
 
 // pathing checks
-// each function returns either null or the first piece it encounters
+// return: all unoccupied squares from current position to and including limit, and the last square
+// -- ex) {free:[], last_piece:Piece}
+// --- if piece exists we use its position and color
 
 // -check top left
-function checkTopLeft(row, col, limit=0, board) {
+// todo: check over all values of check functions
+function checkTopLeft(piece, limit=0, board) {
     let j = col - 1
+    const result = {
+        free: [],
+        last_piece: Piece
+    }
+    const row = piece.row
+    const col = piece.col
     // by default should be 0 as the last square
     // else last square is col - limit unless col - limit is negative
     limit = Math.max(0, col - limit)
     for (let i = row-1; i > -1; i--){
-        if (board[i][j] || j === limit) {
-            return {piece: board[i][j],
-                position: [i, j]}
+        if (board[i][j] || i === limit) {
+            result["last_piece"] = board[i][j]
+        } else {
+            result["free"].push([i, j])
         }
         j--
     }
@@ -527,24 +320,35 @@ function checkTopLeft(row, col, limit=0, board) {
 // -check top right
 function checkTopRight(row, col, limit=0, board) {
     let j = col + 1
+    const result = {
+        free: [],
+        last_piece: Piece
+    }
     limit = Math.min(7, col + limit)
     for (let i = row-1; i > -1; i--){
-        if (board[i][j] || j === limit) {
-            return {piece: board[i][j],
-                position: [i, j]}
+        if (board[i][j] || i === limit) {
+            result["last_piece"] = board[i][j]
+        } else {
+            result["free"].push([i, j])
         }
-        j--
+        j++
     }
 }
 
 // -check bottom left
 function checkBottomLeft(row, col, limit=0, board) {
     let j = col - 1
+    const result = {
+        free: [],
+        last_piece: Piece
+    }
+
     limit = Math.max(0, col - limit)
     for (let i = row+1; i < 8; i++){
-        if (board[i][j] || j === limit) {
-            return {piece: board[i][j],
-                position: [i,j]}
+        if (board[i][j] || i === limit) {
+            result["last_piece"] = board[i][j]
+        } else {
+            result["free"].push([i, j])
         }
         j--
     }
@@ -553,11 +357,16 @@ function checkBottomLeft(row, col, limit=0, board) {
 // -check bottom right
 function checkBottomRight(row, col, limit=0, board) {
     let j = col + 1
+    const result = {
+        free: [],
+        last_piece: Piece
+    }
     limit = Math.min(7, col + limit)
     for (let i = row+1; i < 8; i++){
-        if (board[i][j] || j === limit) {
-            return {piece: board[i][j],
-                position: [i,j]}
+        if (board[i][j] || i === limit) {
+            result["last_piece"] = board[i][j]
+        } else {
+            result["free"].push([i, j])
         }
         j--
     }
@@ -565,60 +374,85 @@ function checkBottomRight(row, col, limit=0, board) {
 
 // -check straight up
 function checkStraightUp(row, col, limit=0, board) {
+    const result = {
+        free: [],
+        last_piece: Piece
+    }
     limit = Math.max(0, row-limit)
     for (let i = row - 1; i > -1; i--) {
-        if (board[i][col] || i === limit) {
-            return {piece: board[i][col],
-                position: [i, col]}
+        if (board[i][j] || i === limit) {
+            result["last_piece"] = board[i][j]
+        } else {
+            result["free"].push([i, j])
         }
     }
 }
 
 // -check straight down
 function checkStraightDown(row, col, limit=0, board) {
+    const result = {
+        free: [],
+        last_piece: Piece
+    }
     limit = Math.min(7, row + limit)
     for (let i = row + 1; i < 8; i++){
-        if (board[i][col] || i === limit) {
-            return {piece: board[i][col],
-                position: [i, col]}
+        if (board[i][j] || i === limit) {
+            result["last_piece"] = board[i][j]
+        } else {
+            result["free"].push([i, j])
         }
     }
 }
 
 // -check straight left
 function checkStraightLeft(row, col, limit=0, board) {
+    const result = {
+        free: [],
+        last_piece: Piece
+    }
     limit = Math.max(0, col - limit)
     for (let i = col - 1; i > -1; i--){
-        if (board[row][i] || i === limit) {
-            return {piece: board[row][i],
-                position: [row, i]}
+        if (board[row][j] || j === limit) {
+            result["last_piece"] = board[i][j]
+        } else {
+            result["free"].push([i, j])
         }
     }
 }
 
 // -check straight right
 function checkStraightRight(row, col, limit=0, board) {
+    const result = {
+        free: [],
+        last_piece: Piece
+    }
     limit = Math.min(7, col + limit)
     for (let i = col + 1; i < 8; i++) {
-        if (board[row][i] || i === limit) {
-            return {piece: board[row][i],
-                position: [row, i]}
+        if (board[i][j] || j === limit) {
+            result["last_piece"] = board[i][j]
+        } else {
+            result["free"].push([i, j])
         }
     }
 }
 
 // -check knight
+// return associated peice with the associated move to check later
 function checkKnight(row, col, board) {
     const d_s = [[-2, -1], [-2, 1], [2, -1], [2, 1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
-    const moves = []
+    const result = {
+        free: [],
+        last_piece: []
+    }
     d_s.forEach(([dx, dy]) => {
         if (row + dx > -1 && row + dx < 8) {
             if (col + dy > -1 && col + dy < 8) {
-                moves.push({piece: board[row + dx][col + dy], position: [row+dx, col+dy]})
+                result["last_piece"].push(board[row+dx][col+dy])
+                result["free"].push([row+dx, col+dy])
             }
         }
     })
-    return moves
+    return result
 }
 
 
