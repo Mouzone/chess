@@ -303,7 +303,7 @@ function checkTopLeft(row, col, limit, board) {
     }
 
     if (limit) {
-        if (checkValidPosititon(row - 1) && checkValidPosititon(col-1)) {
+        if (checkValidPosition(row - 1) && checkValidPosition(col-1)) {
             if (!board[row-1][col-1]) {
                 result.free.push([row-1, col-1])
             }
@@ -333,7 +333,7 @@ function checkTopRight(row, col, limit, board) {
     }
 
     if (limit) {
-        if (checkValidPosititon(row - 1) && checkValidPosititon(col + 1)) {
+        if (checkValidPosition(row - 1) && checkValidPosition(col + 1)) {
             if (!board[row-1][col+1]) {
                 result.free.push([row-1, col+1])
             }
@@ -364,7 +364,7 @@ function checkBottomLeft(row, col, limit, board) {
     }
 
     if (limit) {
-        if (checkValidPosititon(row + 1) && checkValidPosititon(col - 1)) {
+        if (checkValidPosition(row + 1) && checkValidPosition(col - 1)) {
             if (!board[row+1][col-1]) {
                 result.free.push([row+1, col-1])
             }
@@ -394,7 +394,7 @@ function checkBottomRight(row, col, limit, board) {
     }
 
     if (limit) {
-        if (checkValidPosititon(row + 1) && checkValidPosititon(col + 1)) {
+        if (checkValidPosition(row + 1) && checkValidPosition(col + 1)) {
             if (!board[row+1][col+1]) {
                 result.free.push([row+1, col+1])
             }
@@ -520,6 +520,7 @@ function checkKnight(row, col, board) {
         free: [],
         last_piece: []
     }
+    
     d_s.forEach(([dx, dy]) => {
         if (row + dx > -1 && row + dx < 8) {
             if (col + dy > -1 && col + dy < 8) {
@@ -532,7 +533,7 @@ function checkKnight(row, col, board) {
     return result
 }
 
-function checkValidPosititon(value) {
+function checkValidPosition(value) {
     return value >= 0 && value <= 7
 }
 
