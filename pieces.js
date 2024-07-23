@@ -327,18 +327,29 @@ function checkTopLeft(row, col, limit, board) {
 
 // -check top right
 function checkTopRight(row, col, limit=0, board) {
-    let j = col + 1
     const result = {
         free: [],
         last_piece: Piece
     }
-    limit = Math.min(7, col + limit)
+
+    if (limit) {
+        if (checkValidPosititon(row - 1) && checkValidPosititon(col + 1)) {
+            if (!board[row-1][col+1]) {
+                result.free.push([row-1, col+1])
+            }
+            result.last_piece = board[row-1][col+1]
+        }
+        return result
+    }
+
+    let j = col + 1
     for (let i = row-1; i > -1; i--){
-        if (board[i][j] || i === limit) {
+        if (board[i][j]) {
             result["last_piece"] = board[i][j]
         } else {
             result["free"].push([i, j])
         }
+        
         j++
     }
 
