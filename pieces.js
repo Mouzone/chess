@@ -296,25 +296,33 @@ function checkThreat(row, col, color, board) {
 
 // -check top left
 // todo: check over all values of check functions
-function checkTopLeft(piece, limit=0, board) {
-    let j = col - 1
+function checkTopLeft(row, col, limit, board) {
     const result = {
         free: [],
         last_piece: Piece
     }
-    const row = piece.row
-    const col = piece.col
-    // by default should be 0 as the last square
-    // else last square is col - limit unless col - limit is negative
-    limit = Math.max(0, col - limit)
+
+    if (limit) {
+        if (checkValidPosititon(row - 1) && checkValidPosititon(col-1)) {
+            if (!board[row-1][col-1]) {
+                result.free.push([row-1, col-1])
+            }
+            result.last_piece = board[row-1][col-1]
+        }
+        return result
+    }
+
+    let j = col - 1
     for (let i = row-1; i > -1; i--){
-        if (board[i][j] || i === limit) {
+        if (board[i][j]) {
             result["last_piece"] = board[i][j]
         } else {
             result["free"].push([i, j])
         }
         j--
     }
+
+    return result
 }
 
 // -check top right
@@ -333,6 +341,8 @@ function checkTopRight(row, col, limit=0, board) {
         }
         j++
     }
+
+    return result
 }
 
 // -check bottom left
@@ -352,6 +362,8 @@ function checkBottomLeft(row, col, limit=0, board) {
         }
         j--
     }
+
+    return result
 }
 
 // -check bottom right
@@ -370,6 +382,8 @@ function checkBottomRight(row, col, limit=0, board) {
         }
         j--
     }
+
+    return result
 }
 
 // -check straight up
@@ -386,6 +400,8 @@ function checkStraightUp(row, col, limit=0, board) {
             result["free"].push([i, j])
         }
     }
+
+    return result
 }
 
 // -check straight down
@@ -402,6 +418,8 @@ function checkStraightDown(row, col, limit=0, board) {
             result["free"].push([i, j])
         }
     }
+
+    return result
 }
 
 // -check straight left
@@ -418,6 +436,8 @@ function checkStraightLeft(row, col, limit=0, board) {
             result["free"].push([i, j])
         }
     }
+
+    return result
 }
 
 // -check straight right
@@ -434,10 +454,12 @@ function checkStraightRight(row, col, limit=0, board) {
             result["free"].push([i, j])
         }
     }
+
+    return result
 }
 
 // -check knight
-// return associated peice with the associated move to check later
+// return associated piece with the associated move to check later
 function checkKnight(row, col, board) {
     const d_s = [[-2, -1], [-2, 1], [2, -1], [2, 1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
     const result = {
@@ -452,7 +474,12 @@ function checkKnight(row, col, board) {
             }
         }
     })
+
     return result
+}
+
+function checkValidPosititon(value) {
+    return value >= 0 && value <= 7
 }
 
 
