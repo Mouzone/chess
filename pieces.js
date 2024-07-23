@@ -326,7 +326,7 @@ function checkTopLeft(row, col, limit, board) {
 }
 
 // -check top right
-function checkTopRight(row, col, limit=0, board) {
+function checkTopRight(row, col, limit, board) {
     const result = {
         free: [],
         last_piece: Piece
@@ -357,7 +357,7 @@ function checkTopRight(row, col, limit=0, board) {
 }
 
 // -check bottom left
-function checkBottomLeft(row, col, limit=0, board) {
+function checkBottomLeft(row, col, limit, board) {
     const result = {
         free: [],
         last_piece: Piece
@@ -387,7 +387,7 @@ function checkBottomLeft(row, col, limit=0, board) {
 }
 
 // -check bottom right
-function checkBottomRight(row, col, limit=0, board) {
+function checkBottomRight(row, col, limit, board) {
     const result = {
         free: [],
         last_piece: Piece
@@ -417,17 +417,23 @@ function checkBottomRight(row, col, limit=0, board) {
 }
 
 // -check straight up
-function checkStraightUp(row, col, limit=0, board) {
+// limit can be 0, 1 or 2
+
+function checkStraightUp(row, col, limit, board) {
     const result = {
         free: [],
         last_piece: Piece
     }
-    limit = Math.max(0, row-limit)
-    for (let i = row - 1; i > -1; i--) {
-        if (board[i][j] || i === limit) {
-            result["last_piece"] = board[i][j]
+
+    if (limit) {
+        limit = Math.max(0, row - limit)
+    }
+
+    for (let i = row - 1; i >= limit; i--) {
+        if (board[i][col]) {
+            result["last_piece"] = board[i][col]
         } else {
-            result["free"].push([i, j])
+            result["free"].push([i, col])
         }
     }
 
@@ -440,12 +446,19 @@ function checkStraightDown(row, col, limit=0, board) {
         free: [],
         last_piece: Piece
     }
-    limit = Math.min(7, row + limit)
-    for (let i = row + 1; i < 8; i++){
-        if (board[i][j] || i === limit) {
-            result["last_piece"] = board[i][j]
+
+
+    if (limit) {
+        limit = Math.min(7, row + limit)
+    } else {
+        limit = 7
+    }
+
+    for (let i = row + 1; i <= limit; i++){
+        if (board[i][col]) {
+            result["last_piece"] = board[i][col]
         } else {
-            result["free"].push([i, j])
+            result["free"].push([i, col])
         }
     }
 
