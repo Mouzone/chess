@@ -494,12 +494,18 @@ function checkStraightRight(row, col, limit=0, board) {
         free: [],
         last_piece: Piece
     }
-    limit = Math.min(7, col + limit)
-    for (let i = col + 1; i < 8; i++) {
-        if (board[i][j] || j === limit) {
-            result["last_piece"] = board[i][j]
+
+    if (limit) {
+        limit = Math.min(7, col + limit)
+    } else {
+        limit = 7
+    }
+
+    for (let i = col + 1; i <= limit; i++) {
+        if (board[row][i]) {
+            result["last_piece"] = board[row][i]
         } else {
-            result["free"].push([i, j])
+            result["free"].push([row, i])
         }
     }
 
