@@ -441,7 +441,7 @@ function checkStraightUp(row, col, limit, board) {
 }
 
 // -check straight down
-function checkStraightDown(row, col, limit=0, board) {
+function checkStraightDown(row, col, limit, board) {
     const result = {
         free: [],
         last_piece: Piece
@@ -466,17 +466,22 @@ function checkStraightDown(row, col, limit=0, board) {
 }
 
 // -check straight left
-function checkStraightLeft(row, col, limit=0, board) {
+function checkStraightLeft(row, col, limit, board) {
     const result = {
         free: [],
         last_piece: Piece
     }
-    limit = Math.max(0, col - limit)
-    for (let i = col - 1; i > -1; i--){
-        if (board[row][j] || j === limit) {
-            result["last_piece"] = board[i][j]
+
+    // either 1 or 0
+    if (limit) {
+        limit = Math.max(0, col - limit)
+    }
+
+    for (let i = col - 1; i >= limit; i--){
+        if (board[row][i]) {
+            result["last_piece"] = board[row][i]
         } else {
-            result["free"].push([i, j])
+            result["free"].push([row, i])
         }
     }
 
