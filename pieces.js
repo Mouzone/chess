@@ -373,15 +373,89 @@ export class Queen extends Piece {
 
 // check if the square/piece is under threat by any pieces close by
 function checkThreat(row, col, color, board) {
-//     checkTopLeft
-    // checkTopRight
-    // checkBottomLeft
-    // checkBottomRight
-    // checkStraightUp
-    // checkStraightDown
-    // checkStraightLeft
-    // checkStraightRight
-    // checkKnight
+    const limit = 0
+    // todo: rewrite pawn checks for checkThreat depending on color and direction
+    const top_left = checkTopLeft(row, col, limit, board)
+    if (top_left.last_piece && top_left.last_piece.color !== color) {
+        if (top_left.last_piece instanceof Bishop || top_left.last_piece instanceof Queen) {
+            return true
+        } else if (top_left.free.length === 1 && (top_left.last_piece instanceof King || top_left.last_piece instanceof Pawn)) {
+            return true
+        }
+    }
+
+
+    const top_right = checkTopRight(row, col, limit, board)
+    if (top_right.last_piece && top_right.last_piece.color !== color) {
+        if (top_right.last_piece instanceof Bishop || top_right.last_piece instanceof Queen) {
+            return true
+        } else if (top_right.free.length === 1 && (top_right.last_piece instanceof King || top_right.last_piece instanceof Pawn)) {
+            return true
+        }
+    }
+
+    const bottom_left = checkBottomLeft(row, col, limit, board)
+    if (bottom_left.last_piece && bottom_left.last_piece.color !== color) {
+        if (bottom_left.last_piece instanceof Bishop || bottom_left.last_piece instanceof Queen) {
+            return true
+        } else if (bottom_left.free.length === 1 && (bottom_left.last_piece instanceof King || bottom_left.last_piece instanceof Pawn)) {
+            return true
+        }
+    }
+
+    const bottom_right = checkBottomRight(row, col, limit, board)
+    if (bottom_right.last_piece && bottom_right.last_piece.color !== color) {
+        if (bottom_right.last_piece instanceof Bishop || bottom_right.last_piece instanceof Queen) {
+            return true
+        } else if (bottom_right.free.length === 1 && (bottom_right.last_piece instanceof King || bottom_right.last_piece instanceof Pawn)) {
+            return true
+        }
+    }
+
+    const up = checkStraightUp(row, col, limit, board)
+    if (up.last_piece && up.last_piece.color !== color) {
+        if (up.last_piece instanceof Rook || up.last_piece instanceof Queen) {
+            return true
+        } else if (up.free.length === 1 && up.last_piece instanceof King) {
+            return true
+        }
+    }
+
+    const down = checkStraightDown(row, col, limit, board)
+    if (down.last_piece && down.last_piece.color !== color) {
+        if (down.last_piece instanceof Rook || down.last_piece instanceof Queen) {
+            return true
+        } else if (down.free.length === 1 && down.last_piece instanceof King) {
+            return true
+        }
+    }
+
+    const left = checkStraightLeft(row, col, limit, board)
+    if (left.last_piece && left.last_piece.color !== color) {
+        if (left.last_piece instanceof Rook || left.last_piece instanceof Queen) {
+            return true
+        } else if (left.free.length === 1 && left.last_piece instanceof King) {
+            return true
+        }
+    }
+
+    const right = checkStraightRight(row, col, limit, board)
+    if (right.last_piece && right.last_piece.color !== color) {
+        if (right.last_piece instanceof Rook || right.last_piece instanceof Queen) {
+            return true
+        } else if (right.free.length === 1 && right.last_piece instanceof King) {
+            return true
+        }
+    }
+
+    const knight_threats = checkKnight(row, col, board)
+    knight_threats.last_piece.forEach(threat => {
+        if (threat && threat instanceof Knight) {
+            return true
+        }
+    })
+
+    return false
 }
 
 
