@@ -162,11 +162,11 @@ export class Rook extends Piece {
 export class Knight extends Piece {
     getValidMoves(board){
         const moves = checkKnight(this.row, this.col, board)
-        moves.forEach(move => {
-            if (!move.piece || (move.piece && move.piece.color !== this.color)) {
-                this.valid_moves.push(move.position)
+        for (let i = 0; i < moves.free.length; i++) {
+            if (!moves.last_piece[i] || (moves.last_piece[i].color !== this.color)) {
+                this.valid_moves.push(moves.free[i])
             }
-        })
+        }
 
         return this.valid_moves
     }
@@ -174,11 +174,52 @@ export class Knight extends Piece {
 
 export class Bishop extends Piece {
     getValidMoves(board) {
-        const top_left = checkTopLeft(this.row, this.col, board)
-        const top_right = checkTopRight(this.row, this.col, board)
-        const bottom_left = checkBottomLeft(this.row, this.col, board)
-        const bottom_right = checkBottomRight(this.row, this.col, board)
+        const limit = 0
 
+        const top_left = checkTopLeft(this.row, this.col, limit, board)
+        if (!top_left.last_piece) {
+            this.valid_moves = this.valid_moves.concat(top_left.free)
+        } else {
+            this.valid_moves = this.valid_moves.concat(top_left.free.slice(0, -1))
+            if (top_left.last_piece.color !== this.color) {
+                this.valid_moves.push(top_left.free[-1])
+            }
+        }
+
+        const top_right = checkTopRight(this.row, this.col, limit, board)
+        if (!top_right.last_piece) {
+            this.valid_moves = this.valid_moves.concat(top_right.free)
+        } else {
+            this.valid_moves = this.valid_moves.concat(top_right.free.slice(0, -1))
+            if (top_right.last_piece.color !== this.color) {
+                this.valid_moves.push(top_right.free[-1])
+            }
+        }
+
+        const bottom_left = checkBottomLeft(this.row, this.col, limit, board)
+        if (!bottom_left.last_piece) {
+            this.valid_moves = this.valid_moves.concat(bottom_left.free)
+        } else {
+            this.valid_moves = this.valid_moves.concat(bottom_left.free.slice(0, -1))
+            if (bottom_left.last_piece.color !== this.color) {
+                this.valid_moves.push(bottom_left.free[-1])
+            }
+        }
+
+        const bottom_right = checkBottomRight(this.row, this.col, limit, board)
+        if (!bottom_right.last_piece) {
+            this.valid_moves = this.valid_moves.concat(bottom_right.free)
+        } else {
+            this.valid_moves = this.valid_moves.concat(bottom_right.free.slice(0, -1))
+            if (bottom_right.last_piece.color !== this.color) {
+                this.valid_moves.push(bottom_right.free[-1])
+            }
+        }
+
+        console.log(top_left.free)
+        console.log(top_right.free)
+        console.log(bottom_left.free)
+        console.log(bottom_right.free)
         return this.valid_moves
     }
 }
@@ -221,8 +262,6 @@ export class King extends Piece {
         return this.valid_moves
     }
 
-    // todo: only move the king and remove the rook move logic here
-    // -- keep the bonus_move logic here
     move(row, col, board) {
         super.move(row, col, board)
         this.bonus_move = false
@@ -322,10 +361,8 @@ function checkThreat(row, col, color, board) {
 // pathing checks
 // return: all unoccupied squares from current position to and including limit, and the last square
 // -- ex) {free:[], last_piece:Piece}
-// --- if piece exists we use its position and color
 
-// -check top left
-// todo: check over all values of check functions
+// todo: break if j gets to an invalid value for diagonal checks
 function checkTopLeft(row, col, limit, board) {
     const result = {
         free: [],
@@ -346,6 +383,7 @@ function checkTopLeft(row, col, limit, board) {
     for (let i = row-1; i > -1; i--){
         if (board[i][j]) {
             result["last_piece"] = board[i][j]
+            result["free"].push([i, j])
             break
         } else {
             result["free"].push([i, j])
@@ -377,6 +415,7 @@ function checkTopRight(row, col, limit, board) {
     for (let i = row-1; i > -1; i--){
         if (board[i][j]) {
             result["last_piece"] = board[i][j]
+            result["free"].push([i, j])
             break
         } else {
             result["free"].push([i, j])
@@ -409,6 +448,7 @@ function checkBottomLeft(row, col, limit, board) {
     for (let i = row+1; i < 8; i++){
         if (board[i][j]) {
             result["last_piece"] = board[i][j]
+            result["free"].push([i, j])
             break
         } else {
             result["free"].push([i, j])
@@ -440,6 +480,7 @@ function checkBottomRight(row, col, limit, board) {
     for (let i = row+1; i < 8; i++){
         if (board[i][j]) {
             result["last_piece"] = board[i][j]
+            result["free"].push([i, j])
             break
         } else {
             result["free"].push([i, j])
