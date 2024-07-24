@@ -47,9 +47,10 @@ export class Pawn extends Piece {
             const straight_down = checkStraightDown(this.row, this.col, limit, board)
             if (!straight_down.last_piece) {
                 this.valid_moves = this.valid_moves.concat(straight_down.free)
-            } else if (straight_down.length === 2) {
+            } else if (straight_down.free.length === 2) {
                 this.valid_moves.push(straight_down.free[0])
             }
+            console.log(straight_down)
         } else {
             const top_right = checkTopRight(this.row, this.col, limit, board)
             if (top_right.last_piece && top_right.last_piece.color !== this.color) {
@@ -67,11 +68,10 @@ export class Pawn extends Piece {
             const straight_up = checkStraightUp(this.row, this.col, limit, board)
             if (!straight_up.last_piece) {
                 this.valid_moves = this.valid_moves.concat(straight_up.free)
-            } else if (straight_up.length === 2) {
+            } else if (straight_up.free.length === 2) {
                 this.valid_moves.push(straight_up.free[0])
             }
         }
-
         return this.valid_moves
     }
 
@@ -364,7 +364,6 @@ function checkThreat(row, col, color, board) {
 // return: all unoccupied squares from current position to and including limit, and the last square
 // -- ex) {free:[], last_piece:Piece}
 
-// todo: break if j gets to an invalid value for diagonal checks
 function checkTopLeft(row, col, limit, board) {
     const result = {
         free: [],
