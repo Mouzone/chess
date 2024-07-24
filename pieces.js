@@ -50,7 +50,6 @@ export class Pawn extends Piece {
             } else if (straight_down.free.length === 2) {
                 this.valid_moves.push(straight_down.free[0])
             }
-            console.log(straight_down)
         } else {
             const top_right = checkTopRight(this.row, this.col, limit, board)
             if (top_right.last_piece && top_right.last_piece.color !== this.color) {
@@ -217,11 +216,6 @@ export class Bishop extends Piece {
             }
         }
 
-        console.log(this.row, this.col)
-        console.log(top_left)
-        console.log(top_right)
-        console.log(bottom_left)
-        console.log(bottom_right)
         return this.valid_moves
     }
 }
@@ -272,76 +266,107 @@ export class King extends Piece {
 
 export class Queen extends Piece {
     getValidMoves(board) {
-        // go as left as possible
-        for (let i = this.col - 1; i > -1; i--){
-            if (board[this.row][i]){
-                break
+        const limit = 0
+
+        const top_left = checkTopLeft(this.row, this.col, limit, board)
+        if (!top_left.last_piece) {
+            this.valid_moves = this.valid_moves.concat(top_left.free)
+        } else {
+            this.valid_moves = this.valid_moves.concat(top_left.free.slice(0, -1))
+            if (top_left.last_piece.color !== this.color) {
+                this.valid_moves.push(top_left.free[top_left.free.length-1])
             }
-            this.valid_moves.push([this.row, i])
         }
 
-        // go as right as possible
-        for (let i = this.col + 1; i < 8; i++){
-            if (board[this.row][i]){
-                break
+        const top_right = checkTopRight(this.row, this.col, limit, board)
+        if (!top_right.last_piece) {
+            this.valid_moves = this.valid_moves.concat(top_right.free)
+        } else {
+            this.valid_moves = this.valid_moves.concat(top_right.free.slice(0, -1))
+            if (top_right.last_piece.color !== this.color) {
+                this.valid_moves.push(top_right.free[top_right.free.length-1])
             }
-            this.valid_moves.push([this.row, i])
         }
 
-        // go as up as possible
-        for (let i = this.row - 1; i > -1; i--){
-            if (board[i][this.col]){
-                break
+        const bottom_left = checkBottomLeft(this.row, this.col, limit, board)
+        if (!bottom_left.last_piece) {
+            this.valid_moves = this.valid_moves.concat(bottom_left.free)
+        } else {
+            this.valid_moves = this.valid_moves.concat(bottom_left.free.slice(0, -1))
+            if (bottom_left.last_piece.color !== this.color) {
+                this.valid_moves.push(bottom_left.free[bottom_left.free.length-1])
             }
-            this.valid_moves.push([i, this.col])
         }
 
-        // go as down as possible
-        for (let i = this.row + 1; i < 8; i++){
-            if (board[i][this.col]){
-                break
+        const bottom_right = checkBottomRight(this.row, this.col, limit, board)
+        if (!bottom_right.last_piece) {
+            this.valid_moves = this.valid_moves.concat(bottom_right.free)
+        } else {
+            this.valid_moves = this.valid_moves.concat(bottom_right.free.slice(0, -1))
+            if (bottom_right.last_piece.color !== this.color) {
+                this.valid_moves.push(bottom_right.free[bottom_right.free.length-1])
             }
-            this.valid_moves.push([i, this.col])
         }
 
-        let j = this.col - 1
-        for (let i = this.row-1; i > -1; i--){
-            if (j < 0 || board[i][j]){
-                break
-            }
-            this.valid_moves.push([i, j])
-            j--
+        const up = checkStraightUp(this.row, this.col, limit, board)
+        if (!up.last_piece) {
+            this.valid_moves = this.valid_moves.concat(up.free)
+        } else {
+            up.free.forEach(([move_row, move_col])=> {
+                if (move_row === up.last_piece.row && move_col === up.last_piece.col) {
+                    if (up.last_piece.color !== this.color) {
+                        this.valid_moves.push([move_row, move_col])
+                    }
+                } else {
+                    this.valid_moves.push([move_row, move_col])
+                }
+            })
         }
 
-        // diagonal to top right corner
-        j = this.col + 1
-        for (let i = this.row-1; i > -1; i--){
-            if (j === 8 || board[i][j]){
-                break
-            }
-            this.valid_moves.push([i, j])
-            j++
+        const down = checkStraightDown(this.row, this.col, limit, board)
+        if (!down.last_piece) {
+            this.valid_moves = this.valid_moves.concat(down.free)
+        } else {
+            down.free.forEach(([move_row, move_col])=> {
+                if (move_row === down.last_piece.row && move_col === down.last_piece.col) {
+                    if (down.last_piece.color !== this.color) {
+                        this.valid_moves.push([move_row, move_col])
+                    }
+                } else {
+                    this.valid_moves.push([move_row, move_col])
+                }
+            })
         }
 
-        // diagonal to bottom left corner
-        j = this.col - 1
-        for (let i = this.row+1; i < 8; i++){
-            if (j < 0 || board[i][j]){
-                break
-            }
-            this.valid_moves.push([i, j])
-            j--
-        }
-        // diagonal to bottom right corner
-        j = this.col + 1
-        for (let i = this.row+1; i < 8; i++){
-            if (j === 8 || board[i][j]){
-                break
-            }
-            this.valid_moves.push([i, j])
-            j++
+        const left = checkStraightLeft(this.row, this.col, limit, board)
+        if (!left.last_piece) {
+            this.valid_moves = this.valid_moves.concat(left.free)
+        } else {
+            left.free.forEach(([move_row, move_col])=> {
+                if (move_row === left.last_piece.row && move_col === left.last_piece.col) {
+                    if (left.last_piece.color !== this.color) {
+                        this.valid_moves.push([move_row, move_col])
+                    }
+                } else {
+                    this.valid_moves.push([move_row, move_col])
+                }
+            })
         }
 
+        const right = checkStraightRight(this.row, this.col, limit, board)
+        if (!right.last_piece) {
+            this.valid_moves = this.valid_moves.concat(right.free)
+        } else {
+            right.free.forEach(([move_row, move_col])=> {
+                if (move_row === right.last_piece.row && move_col === right.last_piece.col) {
+                    if (right.last_piece.color !== this.color) {
+                        this.valid_moves.push([move_row, move_col])
+                    }
+                } else {
+                    this.valid_moves.push([move_row, move_col])
+                }
+            })
+        }
         return this.valid_moves
     }
 }
