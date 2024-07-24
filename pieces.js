@@ -374,13 +374,18 @@ export class Queen extends Piece {
 // check if the square/piece is under threat by any pieces close by
 function checkThreat(row, col, color, board) {
     const limit = 0
-    // todo: rewrite pawn checks for checkThreat depending on color and direction
+
+    // if piece is white then only check for black pawn ABOVE it
     const top_left = checkTopLeft(row, col, limit, board)
     if (top_left.last_piece && top_left.last_piece.color !== color) {
         if (top_left.last_piece instanceof Bishop || top_left.last_piece instanceof Queen) {
             return true
-        } else if (top_left.free.length === 1 && (top_left.last_piece instanceof King || top_left.last_piece instanceof Pawn)) {
-            return true
+        } else if (top_left.free.length === 1) {
+            if (top_left.last_piece instanceof King) {
+                return true
+            } else if (top_left.last_piece instanceof Pawn && color === 0) {
+                return true
+            }
         }
     }
 
@@ -389,17 +394,26 @@ function checkThreat(row, col, color, board) {
     if (top_right.last_piece && top_right.last_piece.color !== color) {
         if (top_right.last_piece instanceof Bishop || top_right.last_piece instanceof Queen) {
             return true
-        } else if (top_right.free.length === 1 && (top_right.last_piece instanceof King || top_right.last_piece instanceof Pawn)) {
-            return true
+        } else if (top_right.free.length === 1) {
+            if (top_right.last_piece instanceof King) {
+                return true
+            } else if (top_right.last_piece instanceof Pawn && color === 0) {
+                return true
+            }
         }
     }
 
+    // if piece is black then only check for white pawn BELOW it else don't check
     const bottom_left = checkBottomLeft(row, col, limit, board)
     if (bottom_left.last_piece && bottom_left.last_piece.color !== color) {
         if (bottom_left.last_piece instanceof Bishop || bottom_left.last_piece instanceof Queen) {
             return true
-        } else if (bottom_left.free.length === 1 && (bottom_left.last_piece instanceof King || bottom_left.last_piece instanceof Pawn)) {
-            return true
+        } else if (bottom_left.free.length === 1) {
+            if (bottom_left.last_piece instanceof King) {
+                return true
+            } else if (bottom_left.last_piece instanceof Pawn && this.color === 0) {
+                return true
+            }
         }
     }
 
@@ -407,8 +421,12 @@ function checkThreat(row, col, color, board) {
     if (bottom_right.last_piece && bottom_right.last_piece.color !== color) {
         if (bottom_right.last_piece instanceof Bishop || bottom_right.last_piece instanceof Queen) {
             return true
-        } else if (bottom_right.free.length === 1 && (bottom_right.last_piece instanceof King || bottom_right.last_piece instanceof Pawn)) {
-            return true
+        } else if (bottom_right.free.length === 1) {
+            if (bottom_right.last_piece instanceof King) {
+                return true
+            } else if (bottom_right.last_piece instanceof Pawn && this.color === 0) {
+                return true
+            }
         }
     }
 
