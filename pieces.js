@@ -31,43 +31,43 @@ export class Pawn extends Piece {
         let limit = 1
         if (this.color) {
             const bottom_right = checkBottomRight(this.row, this.col, limit, board)
-            if (!bottom_right.piece || (bottom_right.piece && bottom_right.color !== this.color)) {
-                this.valid_moves.push(bottom_right.position)
+            if (bottom_right.last_piece && bottom_right.color !== this.color) {
+                this.valid_moves.push([bottom_right.last_piece.row, bottom_right.last_piece.col])
             }
 
             const bottom_left = checkBottomLeft(this.row, this.col, limit, board)
-            if (!bottom_left.piece || (bottom_left.piece && bottom_left.color !== this.color)) {
-                this.valid_moves.push(bottom_left.position)
+            if (bottom_left.last_piece && bottom_left.color !== this.color) {
+                this.valid_moves.push([bottom_left.last_piece.row, bottom_left.last_piece.col])
             }
 
             if (this.bonus_move) {
                 limit = 2
             }
             const straight_down = checkStraightDown(this.row, this.col, limit, board)
-            if (!straight_down.piece || (straight_down.piece && straight_down.color !== this.color)) {
-                for (let i = 0; i <= straight_down.position[1]; i++) {
-                    this.valid_moves.push([i, bottom_left.position[1]])
-                }
+            if (!straight_down.last_piece) {
+                this.valid_moves = this.valid_moves.concat(straight_down.free)
+            } else if (straight_down.length === 2) {
+                this.valid_moves.push(straight_down.free[0])
             }
         } else {
             const top_right = checkTopRight(this.row, this.col, limit, board)
-            if (!top_right.piece || (top_right.piece && top_right.color !== this.color)) {
-                this.valid_moves.push(top_right.position)
+            if (top_right.last_piece && top_right.last_piece.color !== this.color) {
+                this.valid_moves.push([top_right.last_piece.row, top_right.last_piece.col])
             }
 
             const top_left = checkTopLeft(this.row, this.col, limit, board)
-            if (!top_left.piece || (top_left.piece && top_left.color !== this.color)) {
-                this.valid_moves.push(top_left.position)
+            if (top_left.last_piece && top_left.last_piece.color !== this.color) {
+                this.valid_moves.push([top_left.last_piece.row, top_left.last_piece.col])
             }
 
             if (this.bonus_move) {
                 limit = 2
             }
             const straight_up = checkStraightUp(this.row, this.col, limit, board)
-            if (!straight_up.piece || (straight_up.piece && straight_up.color !== this.color)) {
-                for (let i = 0; i <= straight_up.position[1]; i++) {
-                    this.valid_moves.push([i, straight_up.position[1]])
-                }
+            if (!straight_up.last_piece) {
+                this.valid_moves = this.valid_moves.concat(straight_up.free)
+            } else if (straight_up.length === 2) {
+                this.valid_moves.push(straight_up.free[0])
             }
         }
 
@@ -299,7 +299,7 @@ function checkThreat(row, col, color, board) {
 function checkTopLeft(row, col, limit, board) {
     const result = {
         free: [],
-        last_piece: Piece
+        last_piece: null
     }
 
     if (limit) {
@@ -329,7 +329,7 @@ function checkTopLeft(row, col, limit, board) {
 function checkTopRight(row, col, limit, board) {
     const result = {
         free: [],
-        last_piece: Piece
+        last_piece: null
     }
 
     if (limit) {
@@ -360,7 +360,7 @@ function checkTopRight(row, col, limit, board) {
 function checkBottomLeft(row, col, limit, board) {
     const result = {
         free: [],
-        last_piece: Piece
+        last_piece: null
     }
 
     if (limit) {
@@ -390,7 +390,7 @@ function checkBottomLeft(row, col, limit, board) {
 function checkBottomRight(row, col, limit, board) {
     const result = {
         free: [],
-        last_piece: Piece
+        last_piece: null
     }
 
     if (limit) {
@@ -422,7 +422,7 @@ function checkBottomRight(row, col, limit, board) {
 function checkStraightUp(row, col, limit, board) {
     const result = {
         free: [],
-        last_piece: Piece
+        last_piece: null
     }
 
     if (limit) {
@@ -444,7 +444,7 @@ function checkStraightUp(row, col, limit, board) {
 function checkStraightDown(row, col, limit, board) {
     const result = {
         free: [],
-        last_piece: Piece
+        last_piece: null
     }
 
 
@@ -469,7 +469,7 @@ function checkStraightDown(row, col, limit, board) {
 function checkStraightLeft(row, col, limit, board) {
     const result = {
         free: [],
-        last_piece: Piece
+        last_piece: null
     }
 
     // either 1 or 0
@@ -492,7 +492,7 @@ function checkStraightLeft(row, col, limit, board) {
 function checkStraightRight(row, col, limit=0, board) {
     const result = {
         free: [],
-        last_piece: Piece
+        last_piece: null
     }
 
     if (limit) {
@@ -520,7 +520,7 @@ function checkKnight(row, col, board) {
         free: [],
         last_piece: []
     }
-    
+
     d_s.forEach(([dx, dy]) => {
         if (row + dx > -1 && row + dx < 8) {
             if (col + dy > -1 && col + dy < 8) {
