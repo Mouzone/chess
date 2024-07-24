@@ -88,36 +88,66 @@ export class Rook extends Piece {
     }
 
     getValidMoves(board){
-        const up = checkStraightUp(this.row, this.col, board)
-        for (let i = this.row - 1; i > up.position[0]; i--) {
-            this.valid_moves.push([i, up.position[1]])
-        }
-        if (up.piece.color !== this.color) {
-            this.valid_moves.push(up.position)
+        const limit = 0
+
+        const up = checkStraightUp(this.row, this.col, limit, board)
+        if (!up.last_piece) {
+            this.valid_moves = this.valid_moves.concat(up.free)
+        } else {
+            up.free.forEach(([move_row, move_col])=> {
+                if (move_row === up.last_piece.row && move_col === up.last_piece.col) {
+                    if (up.last_piece.color !== this.color) {
+                        this.valid_moves.push([move_row, move_col])
+                    }
+                } else {
+                    this.valid_moves.push([move_row, move_col])
+                }
+            })
         }
 
-        const down = checkStraightDown(this.row, this.col, board)
-        for (let i = this.row + 1; i < down.position[0]; i++) {
-            this.valid_moves.push([i, down.position[1]])
-        }
-        if (down.piece.color !== this.color) {
-            this.valid_moves.push(down.position)
+        const down = checkStraightDown(this.row, this.col, limit, board)
+        if (!down.last_piece) {
+            this.valid_moves = this.valid_moves.concat(down.free)
+        } else {
+            down.free.forEach(([move_row, move_col])=> {
+                if (move_row === down.last_piece.row && move_col === down.last_piece.col) {
+                    if (down.last_piece.color !== this.color) {
+                        this.valid_moves.push([move_row, move_col])
+                    }
+                } else {
+                    this.valid_moves.push([move_row, move_col])
+                }
+            })
         }
 
-        const left = checkStraightLeft(this.row, this.col, board)
-        for (let j = this.row - 1; j > left.position[1]; j--) {
-            this.valid_moves.push([left.position[0], j])
-        }
-        if (left.piece.color !== this.color) {
-            this.valid_moves.push(left.position)
+        const left = checkStraightLeft(this.row, this.col, limit, board)
+        if (!left.last_piece) {
+            this.valid_moves = this.valid_moves.concat(left.free)
+        } else {
+            left.free.forEach(([move_row, move_col])=> {
+                if (move_row === left.last_piece.row && move_col === left.last_piece.col) {
+                    if (left.last_piece.color !== this.color) {
+                        this.valid_moves.push([move_row, move_col])
+                    }
+                } else {
+                    this.valid_moves.push([move_row, move_col])
+                }
+            })
         }
 
-        const right = checkStraightRight(this.row, this.col, board)
-        for (let j = this.row + 1; j < left.position[1]; j++) {
-            this.valid_moves.push([right.position[0], j])
-        }
-        if (right.piece.color !== this.color) {
-            this.valid_moves.push(right.position)
+        const right = checkStraightRight(this.row, this.col, limit, board)
+        if (!right.last_piece) {
+            this.valid_moves = this.valid_moves.concat(right.free)
+        } else {
+            right.free.forEach(([move_row, move_col])=> {
+                if (move_row === right.last_piece.row && move_col === right.last_piece.col) {
+                    if (right.last_piece.color !== this.color) {
+                        this.valid_moves.push([move_row, move_col])
+                    }
+                } else {
+                    this.valid_moves.push([move_row, move_col])
+                }
+            })
         }
 
         return this.valid_moves
@@ -316,6 +346,7 @@ function checkTopLeft(row, col, limit, board) {
     for (let i = row-1; i > -1; i--){
         if (board[i][j]) {
             result["last_piece"] = board[i][j]
+            break
         } else {
             result["free"].push([i, j])
         }
@@ -346,6 +377,7 @@ function checkTopRight(row, col, limit, board) {
     for (let i = row-1; i > -1; i--){
         if (board[i][j]) {
             result["last_piece"] = board[i][j]
+            break
         } else {
             result["free"].push([i, j])
         }
@@ -377,6 +409,7 @@ function checkBottomLeft(row, col, limit, board) {
     for (let i = row+1; i < 8; i++){
         if (board[i][j]) {
             result["last_piece"] = board[i][j]
+            break
         } else {
             result["free"].push([i, j])
         }
@@ -407,6 +440,7 @@ function checkBottomRight(row, col, limit, board) {
     for (let i = row+1; i < 8; i++){
         if (board[i][j]) {
             result["last_piece"] = board[i][j]
+            break
         } else {
             result["free"].push([i, j])
         }
@@ -432,6 +466,8 @@ function checkStraightUp(row, col, limit, board) {
     for (let i = row - 1; i >= limit; i--) {
         if (board[i][col]) {
             result["last_piece"] = board[i][col]
+            result["free"].push([i, col])
+            break
         } else {
             result["free"].push([i, col])
         }
@@ -457,6 +493,8 @@ function checkStraightDown(row, col, limit, board) {
     for (let i = row + 1; i <= limit; i++){
         if (board[i][col]) {
             result["last_piece"] = board[i][col]
+            result["free"].push([i, col])
+            break
         } else {
             result["free"].push([i, col])
         }
@@ -480,6 +518,8 @@ function checkStraightLeft(row, col, limit, board) {
     for (let i = col - 1; i >= limit; i--){
         if (board[row][i]) {
             result["last_piece"] = board[row][i]
+            result["free"].push([row, i])
+            break
         } else {
             result["free"].push([row, i])
         }
@@ -504,6 +544,8 @@ function checkStraightRight(row, col, limit=0, board) {
     for (let i = col + 1; i <= limit; i++) {
         if (board[row][i]) {
             result["last_piece"] = board[row][i]
+            result["free"].push([row, i])
+            break
         } else {
             result["free"].push([row, i])
         }

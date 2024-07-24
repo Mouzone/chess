@@ -5,7 +5,7 @@ import {King} from "./pieces.js";
 // -- add a new piece to board_display, board and player of appropriate color
 // todo: en passant
 // -- when moving a pawn with bonus move add to any pawns in the vicinity the en passant move
-
+// todo: glitch when you select piece and drop it and pick another up then pick back up old piece will move second piece
 function generateBoardDisplay(){
     const board = document.querySelector("div#board")
     for(let row = 0; row < 8; row++){
