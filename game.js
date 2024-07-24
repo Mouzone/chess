@@ -1,10 +1,12 @@
 import Player from "./player.js"
-import {King} from "./pieces.js";
+import {King, Pawn, Bishop, Rook, Queen, Knight} from "./pieces.js";
 
 // todo: pawn promotion
 // -- add a new piece to board_display, board and player of appropriate color
 // todo: en passant
 // -- when moving a pawn with bonus move add to any pawns in the vicinity the en passant move
+// todo: check for checkmate and check
+// todo: alternate turns and lock pieces that can be moved based on color
 // todo: glitch when you select piece and drop it and pick another up then pick back up old piece will move second piece
 function generateBoardDisplay(){
     const board = document.querySelector("div#board")
@@ -88,16 +90,20 @@ function movePieceOnBoard(event) {
     move_square.appendChild(target.children[0])
     target.innerHTML = ""
 
-    // todo: write in an check en passant check
     if (board[target.dataset.row][target.dataset.col] instanceof King && Math.abs(move_square.dataset.col - target.dataset.col) === 2){
         castle(board[target.dataset.row][target.dataset.col], target, move_square)
     } else {
         board[target.dataset.row][target.dataset.col].move(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board)
     }
 
+    if (board[target.dataset.row][target.dataset.col] instanceof Pawn) {
+        if (parseInt(move_square.dataset.row) === 0 || parseInt(move_square.dataset.row) === 7) {
+            pawnPromotion(target.dataset.row, target.dataset.col, board[target.dataset.row][target.dataset.col].color)
+        }
+    }
+
     removePossibleMoves()
     target.id = ""
-    console.log(board)
 }
 
 function castle(king, curr_square, move_square) {
@@ -131,8 +137,28 @@ function captureSquare(square) {
 function enPassant() {
 }
 
-function pawnPromotion() {
+function pawnPromotion(row, col, color) {
+    const valid_pieces = ["Rook", "Queen", "Knight", "Bishop"]
 
+    let promote_to = prompt("Enter piece to promote to (Queen, Rook, Bishop, Knight): ")
+    promote_to = promote_to.trim()
+    let promote_to_cleaned = promote_to[0].toUpperCase() + promote_to.substring(0, -1).toLowerCase()
+
+    while (!(promote_to_cleaned in valid_pieces)) {
+        promote_to = prompt("Enter piece to promote to (Queen, Rook, Bishop, Knight): ")
+        promote_to = promote_to.trim()
+        promote_to_cleaned = promote_to[0].toUpperCase() + promote_to.substring(0, -1).toLowerCase()
+    }
+
+    if (promote_to_cleaned === "Rook") {
+        board[row][col] = new Rook(row, col, color)
+    } else if (promote_to_cleaned === "Queen") {
+        board[row][col] = new Queen(row, col, color)
+    } else if (promote_to_cleaned === "Bishop") {
+        board[row][col] = new Bishop(row, col, color)
+    } else {
+        board[row][col] = new Knight(row, col, color)
+    }
 }
 
 // prevent default to allow drop
