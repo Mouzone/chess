@@ -69,7 +69,28 @@ export class Pawn extends Piece {
     }
 
     move(row, col, board) {
+        const temp_row = this.row
         super.move(row, col, board)
+
+        if (Math.abs(temp_row - this.row) === 2) {
+            if (this.col+1 < 8 && board[this.row][this.col+1] && board[this.row][this.col+1] instanceof Pawn) {
+                if (board[this.row][this.col+1].color !== this.color)
+                    if (this.color) {
+                        board[this.row][this.col+1].valid_moves.push([this.row - 1, this.col])
+                    } else {
+                        board[this.row][this.col+1].valid_moves.push([this.row + 1, this.col])
+                    }
+            }
+            if (this.col-1 > -1 && board[this.row][this.col-1] && board[this.row][this.col-1] instanceof Pawn) {
+                if (board[this.row][this.col-1].color !== this.color){
+                    if (this.color) {
+                        board[this.row][this.col-1].valid_moves.push([this.row - 1, this.col])
+                    } else {
+                        board[this.row][this.col-1].valid_moves.push([this.row + 1, this.col])
+                    }
+                }
+            }
+        }
         this.bonus_move = false
     }
 }

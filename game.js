@@ -3,8 +3,8 @@ import {King, Pawn, Bishop, Rook, Queen, Knight} from "./pieces.js";
 
 // todo: en passant
 // -- when moving a pawn with bonus move add to any pawns in the vicinity the en passant move
-// todo: check for checkmate and check
 // todo: alternate turns and lock pieces that can be moved based on color
+// todo: check for checkmate and check
 // todo: glitch when you select piece and drop it and pick another up then pick back up old piece will move second piece
 function generateBoardDisplay(){
     const board = document.querySelector("div#board")
@@ -85,25 +85,38 @@ function makeMoveSquareInteractive(valid_move) {
 
 function movePieceOnBoard(event) {
     const move_square = event.currentTarget
+    const occupied = board[move_square.dataset.row][move_square.dataset.col] !== null
     captureSquare(move_square)
     const target = document.querySelector("#target")
     move_square.appendChild(target.children[0])
     target.innerHTML = ""
 
+    // logic to modify display and board upon castling
     if (board[target.dataset.row][target.dataset.col] instanceof King && Math.abs(move_square.dataset.col - target.dataset.col) === 2){
         castle(board[target.dataset.row][target.dataset.col], target, move_square)
     } else {
         board[target.dataset.row][target.dataset.col].move(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board)
     }
 
+    // logic to modify display and board upon pawnPromotion
     if (board[move_square.dataset.row][move_square.dataset.col] instanceof Pawn) {
         if (parseInt(move_square.dataset.row) === 0 || parseInt(move_square.dataset.row) === 7) {
             pawnPromotion(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board[move_square.dataset.row][move_square.dataset.col].color)
         }
     }
 
+
+    // logic for enPassant
+    if (board[move_square.dataset.row][move_square.dataset.col] instanceof Pawn && (Math.abs(move_square.dataset.col - target.dataset.col) === 1)) {
+        if (!occupied){
+            // if square moving to is not occupied and moving diagonally, move the pawn near it
+            enPassant(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col))
+        }
+    }
+
     removePossibleMoves()
     target.id = ""
+    console.log(board)
 }
 
 function castle(king, curr_square, move_square) {
@@ -134,7 +147,17 @@ function captureSquare(square) {
     board[square.dataset.row][square.dataset.col] = null
 }
 
-function enPassant() {
+function enPassant(row, col) {
+    // (row, col) is a pawn
+    let pawn_to_be_captured = document.querySelector(`[data-row='${row+1}'][data-col='${col}']`)
+    if (board[row][col].color) {
+        board[row-1][col] = null
+        pawn_to_be_captured = document.querySelector(`[data-row='${row-1}'][data-col='${col}']`)
+    } else {
+        board[row+1][col] = null
+    }
+    pawn_to_be_captured.innerHTML = ""
+    // remove all enPassant mvoes form pawns that got the moves
 }
 
 function pawnPromotion(row, col, color) {
