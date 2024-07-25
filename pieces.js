@@ -1,8 +1,3 @@
-// todo: write getValidMoves function for each class and inside it call each check_function
-// todo: white pawn movement
-// todo: pawns check for collision
-// todo: queen capture enemy pieces
-
 class Piece {
     constructor(row, col, color) {
         this.row = row
@@ -21,7 +16,6 @@ class Piece {
     }
 }
 
-// todo: if piece is at 2 pieces in front fix how it generates moves since it could still move one square in front
 export class Pawn extends Piece {
     constructor(row, col, color) {
         super(row, col, color)
@@ -32,12 +26,12 @@ export class Pawn extends Piece {
         let limit = 1
         if (this.color) {
             const bottom_right = checkBottomRight(this.row, this.col, limit, board)
-            if (bottom_right.last_piece && bottom_right.color !== this.color) {
+            if (bottom_right.last_piece && bottom_right.last_piece.color !== this.color) {
                 this.valid_moves.push([bottom_right.last_piece.row, bottom_right.last_piece.col])
             }
 
             const bottom_left = checkBottomLeft(this.row, this.col, limit, board)
-            if (bottom_left.last_piece && bottom_left.color !== this.color) {
+            if (bottom_left.last_piece && bottom_left.last_piece.color !== this.color) {
                 this.valid_moves.push([bottom_left.last_piece.row, bottom_left.last_piece.col])
             }
 
