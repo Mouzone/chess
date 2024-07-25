@@ -1,8 +1,6 @@
 import Player from "./player.js"
 import {King, Pawn, Bishop, Rook, Queen, Knight} from "./pieces.js";
 
-// todo: pawn promotion
-// -- add a new piece to board_display, board and player of appropriate color
 // todo: en passant
 // -- when moving a pawn with bonus move add to any pawns in the vicinity the en passant move
 // todo: check for checkmate and check
@@ -51,19 +49,21 @@ function placePieces() {
 function makePiecesInteractive() {
     const pieces = document.querySelectorAll(".piece")
     pieces.forEach(piece => {
-        piece.addEventListener("dragstart", event => {
-            removePossibleMoves()
+        piece.addEventListener("dragstart", handleDragStart)
+    })
+}
 
-            const curr_square = event.currentTarget.parentElement
-            event.currentTarget.parentElement.id = "target"
+function handleDragStart(event) {
+    removePossibleMoves()
 
-            const curr_row = parseInt(curr_square.dataset.row)
-            const curr_col = parseInt(curr_square.dataset.col)
-            const valid_moves = board[curr_row][curr_col].getValidMoves(board)
-            valid_moves.forEach(valid_move => {
-                makeMoveSquareInteractive(valid_move)
-            })
-        })
+    const curr_square = event.currentTarget.parentElement
+    event.currentTarget.parentElement.id = "target"
+
+    const curr_row = parseInt(curr_square.dataset.row)
+    const curr_col = parseInt(curr_square.dataset.col)
+    const valid_moves = board[curr_row][curr_col].getValidMoves(board)
+    valid_moves.forEach(valid_move => {
+        makeMoveSquareInteractive(valid_move)
     })
 }
 
@@ -96,9 +96,9 @@ function movePieceOnBoard(event) {
         board[target.dataset.row][target.dataset.col].move(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board)
     }
 
-    if (board[target.dataset.row][target.dataset.col] instanceof Pawn) {
+    if (board[move_square.dataset.row][move_square.dataset.col] instanceof Pawn) {
         if (parseInt(move_square.dataset.row) === 0 || parseInt(move_square.dataset.row) === 7) {
-            pawnPromotion(target.dataset.row, target.dataset.col, board[target.dataset.row][target.dataset.col].color)
+            pawnPromotion(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col), board[move_square.dataset.row][move_square.dataset.col].color)
         }
     }
 
@@ -138,27 +138,41 @@ function enPassant() {
 }
 
 function pawnPromotion(row, col, color) {
-    const valid_pieces = ["Rook", "Queen", "Knight", "Bishop"]
+    const valid_pieces = ["rook", "queen", "knight", "bishop"]
 
     let promote_to = prompt("Enter piece to promote to (Queen, Rook, Bishop, Knight): ")
     promote_to = promote_to.trim()
-    let promote_to_cleaned = promote_to[0].toUpperCase() + promote_to.substring(0, -1).toLowerCase()
+    let promote_to_cleaned = promote_to.slice(0, promote_to.length).toLowerCase()
 
-    while (!(promote_to_cleaned in valid_pieces)) {
+    while (!valid_pieces.includes(promote_to_cleaned)) {
         promote_to = prompt("Enter piece to promote to (Queen, Rook, Bishop, Knight): ")
         promote_to = promote_to.trim()
-        promote_to_cleaned = promote_to[0].toUpperCase() + promote_to.substring(0, -1).toLowerCase()
+        promote_to_cleaned = promote_to.slice(0, promote_to.length).toLowerCase()
     }
 
-    if (promote_to_cleaned === "Rook") {
+    if (promote_to_cleaned === "rook") {
         board[row][col] = new Rook(row, col, color)
-    } else if (promote_to_cleaned === "Queen") {
+    } else if (promote_to_cleaned === "queen") {
         board[row][col] = new Queen(row, col, color)
-    } else if (promote_to_cleaned === "Bishop") {
+    } else if (promote_to_cleaned === "bishop") {
         board[row][col] = new Bishop(row, col, color)
     } else {
         board[row][col] = new Knight(row, col, color)
     }
+
+    const to_be_promoted = document.querySelector(`[data-row='${row}'][data-col='${col}']`)
+    to_be_promoted.innerHTML = ""
+    const new_piece = new Image()
+    new_piece.draggable = true
+    new_piece.classList.add("piece")
+    if (color === BLACK) {
+        // slice to remove plural "s" from pieces keys
+        new_piece.src = `./pieces/black-${promote_to_cleaned}.svg`
+    } else {
+        new_piece.src = `./pieces/white-${promote_to_cleaned}.svg`
+    }
+    to_be_promoted.appendChild(new_piece)
+    new_piece.addEventListener("dragstart", handleDragStart)
 }
 
 // prevent default to allow drop
