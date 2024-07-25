@@ -1,8 +1,6 @@
 import Player from "./player.js"
 import {King, Pawn, Bishop, Rook, Queen, Knight} from "./pieces.js";
 
-// todo: en passant
-// -- when moving a pawn with bonus move add to any pawns in the vicinity the en passant move
 // todo: alternate turns and lock pieces that can be moved based on color
 // todo: check for checkmate and check
 // todo: glitch when you select piece and drop it and pick another up then pick back up old piece will move second piece
@@ -105,8 +103,20 @@ function movePieceOnBoard(event) {
         }
     }
 
-
-    // logic for enPassant
+    if (board[move_square.dataset.row][move_square.dataset.col] instanceof Pawn && (Math.abs(move_square.dataset.col - target.dataset.col) === 2)) {
+        if (move_square.dataset.col + 1 < 8) {
+            if (board[move_square.dataset.row][move_square.dataset.col + 1] instanceof Pawn && board[move_square.dataset.row][move_square.dataset.col + 1].color !== board[move_square.dataset.row][move_square.dataset.col].color) {
+                const left_square = document.querySelector(`[data-row='${move_square.dataset.row}'][data-col='${move_square.dataset.col + 1}']`)
+                left_square.classList.add("canEnPassant")
+            }
+        } else if (move_square.dataset.col - 1 > -1) {
+            if (board[move_square.dataset.row][move_square.dataset.col - 1] instanceof Pawn && board[move_square.dataset.row][move_square.dataset.col - 1].color !== board[move_square.dataset.row][move_square.dataset.col].color) {
+                const right_square = document.querySelector(`[data-row='${move_square.dataset.row}'][data-col='${move_square.dataset.col - 1}']`)
+                right_square.classList.add("canEnPassant")
+            }
+        }
+    }
+        // logic for enPassant
     if (board[move_square.dataset.row][move_square.dataset.col] instanceof Pawn && (Math.abs(move_square.dataset.col - target.dataset.col) === 1)) {
         if (!occupied){
             // if square moving to is not occupied and moving diagonally, move the pawn near it
@@ -157,7 +167,12 @@ function enPassant(row, col) {
         board[row+1][col] = null
     }
     pawn_to_be_captured.innerHTML = ""
-    // remove all enPassant mvoes form pawns that got the moves
+
+    const pieces_to_be_cleaned = document.querySelectorAll(".canEnPassant")
+    pieces_to_be_cleaned.forEach(element => {
+        board[element.dataset.row][element.dataset.col].valid_moves.length = 0
+        element.classList.remove("canEnPassant")
+    })
 }
 
 function pawnPromotion(row, col, color) {
