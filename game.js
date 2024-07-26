@@ -1,8 +1,7 @@
 import Player from "./player.js"
 import {King, Pawn, Bishop, Rook, Queen, Knight} from "./pieces.js";
 
-// todo: alternate turns and lock pieces that can be moved based on color
-// todo: check for checkmate and check
+// todo: iterate over pieces and crop it appropriately
 function generateBoardDisplay(){
     const board = document.querySelector("div#board")
     for(let row = 0; row < 8; row++){
@@ -45,8 +44,12 @@ function placePieces() {
     })
 }
 
-function makePiecesInteractive() {
-    const pieces = document.querySelectorAll(".piece")
+function makePiecesInteractive(curr_player) {
+    let color_to_select = "black-piece"
+    if (curr_player === WHITE){
+        color_to_select = "white-piece"
+    }
+    const pieces = document.querySelectorAll(`.${color_to_select}.piece`)
     pieces.forEach(piece => {
         piece.addEventListener("dragstart", handleDragStart)
     })
@@ -132,13 +135,31 @@ function movePieceOnBoard(event) {
         }
     }
 
-    if (occupied && occupied instanceof King) {
-        game_over = true
-    }
-
     removeEnPassant(color_to_remove)
     removePossibleMoves()
+    removePiecesInteractive(color_to_remove)
+    makePiecesInteractive((color_to_remove + 1) % 2)
     target.id = ""
+
+    if (occupied && occupied instanceof King) {
+        endGame()
+    }
+}
+
+function endGame() {
+    // todo: produce popup that says who wins
+    // todo: resets the game state
+}
+
+function removePiecesInteractive(color) {
+    let color_to_select = "black-piece"
+    if (color === WHITE){
+        color_to_select = "white-piece"
+    }
+    const pieces = document.querySelectorAll(`.${color_to_select}.piece`)
+    pieces.forEach(piece => {
+        piece.removeEventListener("dragstart", handleDragStart)
+    })
 }
 
 function castle(king, curr_square, move_square) {
@@ -243,12 +264,13 @@ function handleDragOver(event) {
 function initializeGame(){
     generateBoardDisplay()
     placePieces()
-    makePiecesInteractive()
+    makePiecesInteractive(curr_player)
 }
 
 let game_over = false
 const board = Array.from({ length: 8 }, () => Array(8).fill(null))
 const WHITE = 0
 const BLACK = 1
+let curr_player = WHITE
 const players = [new Player(WHITE), new Player(BLACK)]
 initializeGame()
