@@ -267,7 +267,6 @@ function initializeGame(){
     makePiecesInteractive(curr_player)
 }
 
-let game_over = false
 const board = Array.from({ length: 8 }, () => Array(8).fill(null))
 const WHITE = 0
 const BLACK = 1
