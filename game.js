@@ -21,7 +21,7 @@ function generateBoardDisplay(){
     }
 }
 
-function placePieces() {
+function placePieces(players) {
     players.forEach(player => {
         Object.entries(player.pieces).forEach(([type_of_piece, pieces]) => {
             pieces.forEach(piece => {
@@ -142,13 +142,27 @@ function movePieceOnBoard(event) {
     target.id = ""
 
     if (occupied && occupied instanceof King) {
-        endGame()
+        endGame((occupied.color + 1) % 2)
     }
 }
 
-function endGame() {
-    // todo: produce popup that says who wins
+function endGame(color) {
     // todo: resets the game state
+    const popup = document.getElementById("popup")
+    const game_win_text = document.querySelector("h1")
+    if (color === BLACK) {
+        game_win_text.textContent = "Black Wins!"
+    }
+    popup.style.display = "grid"
+
+    const restart_button = document.querySelector("button#restart")
+    restart_button.addEventListener("click", event => {
+        const board_element = document.getElementById("board")
+        board_element.innerHTML = ""
+        board = Array.from({ length: 8 }, () => Array(8).fill(null))
+        initializeGame()
+        popup.style.display = "none"
+    })
 }
 
 function removePiecesInteractive(color) {
@@ -262,14 +276,14 @@ function handleDragOver(event) {
 }
 
 function initializeGame(){
+    let players = [new Player(WHITE), new Player(BLACK)]
     generateBoardDisplay()
-    placePieces()
+    placePieces(players)
     makePiecesInteractive(curr_player)
 }
 
-const board = Array.from({ length: 8 }, () => Array(8).fill(null))
+let board = Array.from({ length: 8 }, () => Array(8).fill(null))
 const WHITE = 0
 const BLACK = 1
 let curr_player = WHITE
-const players = [new Player(WHITE), new Player(BLACK)]
 initializeGame()
