@@ -3,7 +3,6 @@ import {King, Pawn, Bishop, Rook, Queen, Knight} from "./pieces.js";
 
 // todo: alternate turns and lock pieces that can be moved based on color
 // todo: check for checkmate and check
-// todo: glitch when you select piece and drop it and pick another up then pick back up old piece will move second piece
 function generateBoardDisplay(){
     const board = document.querySelector("div#board")
     for(let row = 0; row < 8; row++){
@@ -89,7 +88,7 @@ function makeMoveSquareInteractive(valid_move) {
 
 function movePieceOnBoard(event) {
     const move_square = event.currentTarget
-    const occupied = board[move_square.dataset.row][move_square.dataset.col] !== null
+    const occupied = board[move_square.dataset.row][move_square.dataset.col]
     captureSquare(move_square)
     const target = document.querySelector("#target")
     move_square.appendChild(target.children[0])
@@ -131,6 +130,10 @@ function movePieceOnBoard(event) {
             // if square moving to is not occupied and moving diagonally, move the pawn near it
             enPassant(parseInt(move_square.dataset.row), parseInt(move_square.dataset.col))
         }
+    }
+
+    if (occupied && occupied instanceof King) {
+        game_over = true
     }
 
     removeEnPassant(color_to_remove)
@@ -243,6 +246,7 @@ function initializeGame(){
     makePiecesInteractive()
 }
 
+let game_over = false
 const board = Array.from({ length: 8 }, () => Array(8).fill(null))
 const WHITE = 0
 const BLACK = 1
