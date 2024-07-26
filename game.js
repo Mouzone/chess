@@ -1,7 +1,6 @@
 import Player from "./player.js"
 import {King, Pawn, Bishop, Rook, Queen, Knight} from "./pieces.js";
 
-// todo: figure where to place enPassanting
 // todo: alternate turns and lock pieces that can be moved based on color
 // todo: check for checkmate and check
 // todo: glitch when you select piece and drop it and pick another up then pick back up old piece will move second piece
@@ -175,9 +174,9 @@ function enPassant(row, col) {
 }
 
 function removeEnPassant(color) {
-    let pieces_color = "black"
+    let pieces_color = "black-piece"
     if (color === WHITE) {
-        pieces_color = "white"
+        pieces_color = "white-piece"
     }
     const pieces_to_be_cleaned = document.querySelectorAll(`.${pieces_color}.canEnPassant`)
     pieces_to_be_cleaned.forEach(element => {

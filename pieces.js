@@ -73,6 +73,7 @@ export class Pawn extends Piece {
         super.move(row, col, board)
 
         if (Math.abs(temp_row - this.row) === 2) {
+            console.log("here")
             if (this.col+1 < 8 && board[this.row][this.col+1] && board[this.row][this.col+1] instanceof Pawn) {
                 if (board[this.row][this.col+1].color !== this.color)
                     if (this.color) {
@@ -80,6 +81,7 @@ export class Pawn extends Piece {
                     } else {
                         board[this.row][this.col+1].valid_moves.push([this.row + 1, this.col])
                     }
+                console.log(board[this.row][this.col+1].valid_moves)
             }
             if (this.col-1 > -1 && board[this.row][this.col-1] && board[this.row][this.col-1] instanceof Pawn) {
                 if (board[this.row][this.col-1].color !== this.color){
@@ -89,6 +91,7 @@ export class Pawn extends Piece {
                         board[this.row][this.col-1].valid_moves.push([this.row + 1, this.col])
                     }
                 }
+                console.log(board[this.row][this.col-1].valid_moves.slice())
             }
         }
         this.bonus_move = false
