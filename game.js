@@ -56,6 +56,10 @@ function makePiecesInteractive() {
 function handleDragStart(event) {
     removePossibleMoves()
 
+    const prev_element = document.getElementById("target")
+    if (prev_element) {
+        prev_element.id = ""
+    }
     const curr_square = event.currentTarget.parentElement
     event.currentTarget.parentElement.id = "target"
 
@@ -79,7 +83,7 @@ function removePossibleMoves() {
 function makeMoveSquareInteractive(valid_move) {
     const move_square = document.querySelector(`[data-row='${valid_move[0]}'][data-col='${valid_move[1]}']`)
     move_square.classList.add("possible-move")
-    move_square.addEventListener("dragover", handleDragOver);
+    move_square.addEventListener("dragover", handleDragOver)
     move_square.addEventListener("drop", movePieceOnBoard)
 }
 
@@ -119,6 +123,7 @@ function movePieceOnBoard(event) {
             }
         }
     }
+
     // logic for enPassant
     const color_to_remove = board[move_square.dataset.row][move_square.dataset.col].color
     if (board[move_square.dataset.row][move_square.dataset.col] instanceof Pawn && (Math.abs(move_square.dataset.col - target.dataset.col) === 1)) {
