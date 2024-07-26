@@ -1,6 +1,7 @@
 import Player from "./player.js"
 import {King, Pawn, Bishop, Rook, Queen, Knight} from "./pieces.js";
 
+// todo: figure where to place enPassanting
 // todo: alternate turns and lock pieces that can be moved based on color
 // todo: check for checkmate and check
 // todo: glitch when you select piece and drop it and pick another up then pick back up old piece will move second piece
@@ -34,8 +35,10 @@ function placePieces() {
                 if (piece.color === BLACK) {
                     // slice to remove plural "s" from pieces keys
                     piece_icon.src = `./pieces/black-${type_of_piece.slice(0,-1)}.svg`
+                    piece_icon.classList.add("black-piece")
                 } else {
                     piece_icon.src = `./pieces/white-${type_of_piece.slice(0,-1)}.svg`
+                    piece_icon.classList.add("white-piece")
                 }
                 board[piece.row][piece.col] = piece
                 target_square.appendChild(piece_icon)
@@ -103,20 +106,22 @@ function movePieceOnBoard(event) {
         }
     }
 
-    if (board[move_square.dataset.row][move_square.dataset.col] instanceof Pawn && (Math.abs(move_square.dataset.col - target.dataset.col) === 2)) {
-        if (move_square.dataset.col + 1 < 8) {
-            if (board[move_square.dataset.row][move_square.dataset.col + 1] instanceof Pawn && board[move_square.dataset.row][move_square.dataset.col + 1].color !== board[move_square.dataset.row][move_square.dataset.col].color) {
-                const left_square = document.querySelector(`[data-row='${move_square.dataset.row}'][data-col='${move_square.dataset.col + 1}']`)
-                left_square.classList.add("canEnPassant")
-            }
-        } else if (move_square.dataset.col - 1 > -1) {
-            if (board[move_square.dataset.row][move_square.dataset.col - 1] instanceof Pawn && board[move_square.dataset.row][move_square.dataset.col - 1].color !== board[move_square.dataset.row][move_square.dataset.col].color) {
-                const right_square = document.querySelector(`[data-row='${move_square.dataset.row}'][data-col='${move_square.dataset.col - 1}']`)
+    if (board[move_square.dataset.row][move_square.dataset.col] instanceof Pawn && (Math.abs(move_square.dataset.row - target.dataset.row) === 2)) {
+        if (parseInt(move_square.dataset.col) + 1 < 8) {
+            if (board[move_square.dataset.row][parseInt(move_square.dataset.col) + 1] instanceof Pawn && board[move_square.dataset.row][parseInt(move_square.dataset.col) + 1].color !== board[move_square.dataset.row][move_square.dataset.col].color) {
+                const right_square = document.querySelector(`[data-row='${move_square.dataset.row}'][data-col='${parseInt(move_square.dataset.col) + 1}']`)
                 right_square.classList.add("canEnPassant")
             }
         }
+        if (parseInt(move_square.dataset.col) - 1 > -1) {
+            if (board[move_square.dataset.row][parseInt(move_square.dataset.col) - 1] instanceof Pawn && board[move_square.dataset.row][parseInt(move_square.dataset.col) - 1].color !== board[move_square.dataset.row][move_square.dataset.col].color) {
+                const left_square = document.querySelector(`[data-row='${move_square.dataset.row}'][data-col='${parseInt(move_square.dataset.col) - 1}']`)
+                left_square.classList.add("canEnPassant")
+            }
+        }
     }
-        // logic for enPassant
+    // logic for enPassant
+    const color_to_remove = board[move_square.dataset.row][move_square.dataset.col].color
     if (board[move_square.dataset.row][move_square.dataset.col] instanceof Pawn && (Math.abs(move_square.dataset.col - target.dataset.col) === 1)) {
         if (!occupied){
             // if square moving to is not occupied and moving diagonally, move the pawn near it
@@ -124,9 +129,9 @@ function movePieceOnBoard(event) {
         }
     }
 
+    removeEnPassant(color_to_remove)
     removePossibleMoves()
     target.id = ""
-    console.log(board)
 }
 
 function castle(king, curr_square, move_square) {
@@ -167,10 +172,18 @@ function enPassant(row, col) {
         board[row+1][col] = null
     }
     pawn_to_be_captured.innerHTML = ""
+}
 
-    const pieces_to_be_cleaned = document.querySelectorAll(".canEnPassant")
+function removeEnPassant(color) {
+    let pieces_color = "black"
+    if (color === WHITE) {
+        pieces_color = "white"
+    }
+    const pieces_to_be_cleaned = document.querySelectorAll(`.${pieces_color}.canEnPassant`)
     pieces_to_be_cleaned.forEach(element => {
-        board[element.dataset.row][element.dataset.col].valid_moves.length = 0
+        if (board[element.dataset.row][element.dataset.col]) {
+            board[element.dataset.row][element.dataset.col].valid_moves.length = 0
+        }
         element.classList.remove("canEnPassant")
     })
 }
@@ -206,8 +219,10 @@ function pawnPromotion(row, col, color) {
     if (color === BLACK) {
         // slice to remove plural "s" from pieces keys
         new_piece.src = `./pieces/black-${promote_to_cleaned}.svg`
+        new_piece.classList.add("black-piece")
     } else {
         new_piece.src = `./pieces/white-${promote_to_cleaned}.svg`
+        new_piece.classList.add("white-piece")
     }
     to_be_promoted.appendChild(new_piece)
     new_piece.addEventListener("dragstart", handleDragStart)
