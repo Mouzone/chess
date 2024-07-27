@@ -159,7 +159,10 @@ function endGame(color) {
     restart_button.addEventListener("click", event => {
         // todo: remove only squares and not the popup
         const board_element = document.getElementById("board")
-        board_element.innerHTML = ""
+        const squares = document.querySelectorAll(".square")
+        squares.forEach(square => {
+            board_element.removeChild(square)
+        })
         board = Array.from({ length: 8 }, () => Array(8).fill(null))
         initializeGame()
         popup.style.display = "none"
