@@ -1,7 +1,6 @@
 import Player from "./player.js"
 import {King, Pawn, Bishop, Rook, Queen, Knight} from "./pieces.js";
 
-// todo: iterate over pieces and crop it appropriately
 function generateBoardDisplay(){
     const board = document.querySelector("div#board")
     for(let row = 0; row < 8; row++){
@@ -97,6 +96,12 @@ function movePieceOnBoard(event) {
     move_square.appendChild(target.children[0])
     target.innerHTML = ""
 
+    if (occupied && occupied instanceof King) {
+        removePossibleMoves()
+        endGame((occupied.color + 1) % 2)
+        return
+    }
+
     // logic to modify display and board upon castling
     if (board[target.dataset.row][target.dataset.col] instanceof King && Math.abs(move_square.dataset.col - target.dataset.col) === 2){
         castle(board[target.dataset.row][target.dataset.col], target, move_square)
@@ -140,14 +145,9 @@ function movePieceOnBoard(event) {
     removePiecesInteractive(color_to_remove)
     makePiecesInteractive((color_to_remove + 1) % 2)
     target.id = ""
-
-    if (occupied && occupied instanceof King) {
-        endGame((occupied.color + 1) % 2)
-    }
 }
 
 function endGame(color) {
-    // todo: resets the game state
     const popup = document.getElementById("popup")
     const game_win_text = document.querySelector("h1")
     if (color === BLACK) {
@@ -157,6 +157,7 @@ function endGame(color) {
 
     const restart_button = document.querySelector("button#restart")
     restart_button.addEventListener("click", event => {
+        // todo: remove only squares and not the popup
         const board_element = document.getElementById("board")
         board_element.innerHTML = ""
         board = Array.from({ length: 8 }, () => Array(8).fill(null))
